@@ -1,0 +1,35 @@
+﻿@using Pin.LiveSports.Core.Models
+
+@*<div>
+    @Feedback
+</div>*@
+
+<h2 style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif">Kijkers</h2>
+
+<div class="row justify-content-start">
+    <div class="col-md-3">
+        <table class="table table-dark">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var viewer in Viewers)
+                {
+                    <tr class="parkrow">
+                        <td >@viewer.Name</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public List<Viewer> Viewers { get; set; }
+
+    //[Parameter]
+    //public string Feedback { get; set; }
+}
