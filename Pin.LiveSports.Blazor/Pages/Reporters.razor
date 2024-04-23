@@ -1,0 +1,49 @@
+﻿@page "/reporters"
+
+@using Pin.LiveSports.Core.Models
+@using Pin.LiveSports.Core.Services.Interfaces
+@using Microsoft.AspNetCore.SignalR.Client
+@using Pin.LiveSports.Blazor.Components
+
+@inject NavigationManager Navigation
+@inject IGameService _gameService
+
+<h3>Reporters</h3>
+
+<div>
+    @Feedback
+</div>
+
+<ViewersList Viewers="viewers">
+</ViewersList>
+
+@code {
+    public string Feedback { get; set; }
+
+    private List<Viewer> viewers = new List<Viewer>();
+    private HubConnection? hubConnection;
+
+    protected override async Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(Navigation.ToAbsoluteUri("/gamehub"))
+            .Build();
+
+        hubConnection.On<string>("NewViewerAddedToViewerList", async (viewerName) =>
+        {
+            Feedback = $"New viewer {viewerName} joined";
+            LoadViewers();
+            await InvokeAsync(StateHasChanged);
+            await Task.Delay(3000);
+            Feedback = string.Empty;
+            await InvokeAsync(StateHasChanged);
+        });
+
+        await hubConnection.StartAsync();
+    }
+
+    private void LoadViewers()
+    {
+        viewers = _gameService.GetAllViewers();
+    }
+}
