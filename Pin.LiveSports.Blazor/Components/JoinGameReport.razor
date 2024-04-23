@@ -1,0 +1,15 @@
+﻿
+@using Pin.LiveSports.Core.Models
+
+<EditForm Model="Viewer" OnValidSubmit="e => OnJoin.InvokeAsync()">
+    <InputText @bind-Value="Viewer.Name" />
+    <button type="submit">Join live report</button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public Viewer Viewer { get; set; }
+
+    [Parameter]
+    public EventCallback OnJoin { get; set; }
+}
