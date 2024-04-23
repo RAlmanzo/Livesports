@@ -1,0 +1,69 @@
+﻿@page "/viewers"
+
+@using Microsoft.AspNetCore.SignalR.Client
+@using Pin.LiveSports.Core.Models
+@using Pin.LiveSports.Core.Services.Interfaces
+@using Pin.LiveSports.Blazor.Hubs
+@using Pin.LiveSports.Blazor.Components
+
+@inject NavigationManager Navigation
+@inject IGameService _gameService
+
+
+@if (!IsJoined)
+{
+    <JoinGameReport Viewer="Viewer"
+                    OnJoin="AddViewer">
+    </JoinGameReport>
+}
+else
+{
+    <div>
+        @Feedback
+    </div>
+
+    <ViewersList Viewers="viewers">
+    </ViewersList>
+}
+
+@code {
+    public string Feedback { get; set; }
+    private Viewer Viewer { get; set; } = new Viewer();
+    public bool IsJoined { get; set; } = false;
+
+    private HubConnection? hubConnection;
+    private List<Viewer> viewers = new List<Viewer>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(Navigation.ToAbsoluteUri("/gamehub"))
+            .Build();
+
+        hubConnection.On<string>("NewViewerAddedToViewerList", async (viewerName) =>
+        {
+            Feedback = $"New viewer {viewerName} joined";
+            await InvokeAsync(StateHasChanged);
+            await Task.Delay(3000);
+            Feedback = string.Empty;
+            await InvokeAsync(StateHasChanged);
+        });
+
+        await hubConnection.StartAsync();
+    }
+
+    private async Task AddViewer()
+    {
+        IsJoined = true;
+        await NotifyNewViewerJoined();
+        viewers = _gameService.GetAllViewers();
+    }
+
+    private async Task NotifyNewViewerJoined()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.SendAsync(nameof(GameHub.NewViewerJoined), Viewer.Name);
+        }
+    }
+}
