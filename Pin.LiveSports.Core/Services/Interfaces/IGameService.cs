@@ -12,5 +12,6 @@ namespace Pin.LiveSports.Core.Services.Interfaces
     {
         void AddViewer(Viewer viewer);
         List<Viewer> GetAllViewers();
+        List<Player> GetAllPlayers();
     }
 }
