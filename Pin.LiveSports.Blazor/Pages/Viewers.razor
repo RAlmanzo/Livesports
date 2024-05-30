@@ -24,7 +24,19 @@ else
 
     <ViewersList Viewers="viewers">
     </ViewersList>
+
+    <div class="container flex">
+        @foreach (var report in reports)
+        {
+            <div>
+                <div class="card" style="width: 25%">@report.Message</div>
+            </div>
+        }
+    </div>
 }
+
+<style>
+</style>
 
 @code {
     public string Feedback { get; set; }
@@ -33,6 +45,7 @@ else
 
     private HubConnection? hubConnection;
     private List<Viewer> viewers = new List<Viewer>();
+    private List<Report> reports = new List<Report>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -47,6 +60,16 @@ else
             await Task.Delay(3000);
             Feedback = string.Empty;
             await InvokeAsync(StateHasChanged);
+        });
+
+        hubConnection.On<Report>("ReceiveMessage", (report) =>
+        {
+            Report newReport = new Report();
+            newReport.Message = report.Message;
+
+            reports.Add(newReport);
+
+            InvokeAsync(StateHasChanged);
         });
 
         await hubConnection.StartAsync();
