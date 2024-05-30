@@ -4,6 +4,7 @@
 @using Pin.LiveSports.Core.Services.Interfaces
 @using Microsoft.AspNetCore.SignalR.Client
 @using Pin.LiveSports.Blazor.Components
+@using Pin.LiveSports.Blazor.Hubs
 
 @inject NavigationManager Navigation
 @inject IGameService _gameService
@@ -17,11 +18,17 @@
 <ViewersList Viewers="viewers">
 </ViewersList>
 
+<EditForm Model="report" OnValidSubmit="SendGameStats">
+    <InputText @bind-Value="report.Message" />
+    <button class="btn btn-primary" type="submit">Verstuur</button>
+</EditForm>
+
 @code {
     public string Feedback { get; set; }
 
     private List<Viewer> viewers = new List<Viewer>();
     private HubConnection? hubConnection;
+    private Report report = new Report();
 
     protected override async Task OnInitializedAsync()
     {
@@ -45,5 +52,14 @@
     private void LoadViewers()
     {
         viewers = _gameService.GetAllViewers();
+    }
+
+    private async Task SendGameStats()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.SendAsync(nameof(GameHub.SendReport), report);
+        }
+        report = new Report();
     }
 }
