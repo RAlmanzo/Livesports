@@ -1,2 +1,17 @@
-﻿body {
+﻿.viewersList {
+    max-height: 150px;
+    max-width: 250px;
+    overflow: auto;
+    padding: 5px;
+}
+
+.viewersList ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.viewersList li {
+    padding: 5px;
+    border: 1px solid black;
 }
