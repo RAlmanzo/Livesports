@@ -11,19 +11,23 @@
 
 <h3>Reporters</h3>
 
-<div>
-    @Feedback
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-5">
+            <PlayersList></PlayersList>
+            <EditForm Model="report" OnValidSubmit="SendGameStats">
+                <InputText @bind-Value="report.Message" class="form-control mb-2" placeholder="Enter report message" />
+                <button class="btn btn-primary" type="submit">Verstuur</button>
+            </EditForm>
+        </div>
+        <div class="col-md-5" style="border:double; height:500px">
+            <ReportOverview></ReportOverview>
+        </div>
+        <div class="col-md-2">
+            <ViewersList Viewers="viewers" Feedback="@Feedback"></ViewersList>         
+        </div>
+    </div>
 </div>
-
-<ViewersList Viewers="viewers">
-</ViewersList>
-
-<PlayersList></PlayersList>
-
-<EditForm Model="report" OnValidSubmit="SendGameStats">
-    <InputText @bind-Value="report.Message" />
-    <button class="btn btn-primary" type="submit">Verstuur</button>
-</EditForm>
 
 @code {
     public string Feedback { get; set; }
