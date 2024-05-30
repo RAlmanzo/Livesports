@@ -26,5 +26,10 @@ namespace Pin.LiveSports.Blazor.Hubs
             _gameService.AddViewer(newViewer);
             await Clients.Others.SendAsync("NewViewerAddedToViewerList", viewerName);
         }
+
+        public async Task SendReport(Report report)
+        {
+            await Clients.Others.SendAsync("ReceiveMessage", report);
+        }
     }
 }
