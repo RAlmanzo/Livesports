@@ -68,8 +68,6 @@
     {
         if (hubConnection is not null)
         {
-            //the add in gamehub doen!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             reports.Add(report);
             await hubConnection.SendAsync(nameof(GameHub.SendReport), report, selectedPlayer);
         }
