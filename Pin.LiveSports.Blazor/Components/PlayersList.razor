@@ -41,12 +41,11 @@
                 <option value="@player.FullName">@player.FullName</option>
             }
         </select>
-
-        <select>
+        <select @onchange="e => SetRound.InvokeAsync(e)">
             <option value="">Selecteer ronde</option>
-            @foreach (var player in _players)
+            @for (int i = 1; i < 3; i++)
             {
-                <option value="@player.FullName">@player.FullName</option>
+                <option value="@i">ronde: @i</option>
             }
         </select>
     </div>
@@ -61,6 +60,8 @@
     public bool IsReporter { get; set; } = false;
     [Parameter]
     public EventCallback<ChangeEventArgs> SetPlayer { get; set; }
+    [Parameter]
+    public EventCallback<ChangeEventArgs> SetRound { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
