@@ -18,7 +18,7 @@
 }
 else
 {
-    <h2 style="text-align:center">Olympische spelen 2024 Frankrijk: wild water kajak</h2>
+<h2 style="text-align:center">@game.Name: wild water kajak</h2>
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-5">
@@ -59,6 +59,7 @@ else
     private List<Viewer> viewers = new List<Viewer>();
     private Player selectedPlayer;
     private List<Report> reports = new List<Report>();
+    private Game game;
 
     protected override async Task OnInitializedAsync()
     {
@@ -77,19 +78,19 @@ else
 
         hubConnection.On("ReportStarted", async () =>
         {
-            IsStarted = true;
+            IsStarted = game.IsStarted;
             await InvokeAsync(StateHasChanged);
         });
 
-        hubConnection.On<Player>("ReceiveMessage", (player) =>
+        hubConnection.On("ReceiveMessage", async () =>
         {
-            selectedPlayer = player;
-            InvokeAsync(StateHasChanged);
+            selectedPlayer = _gameService.GetGame().SelectedPlayer;
+            await InvokeAsync(StateHasChanged);
         });
 
         await hubConnection.StartAsync();
 
-        var game = _gameService.GetGame();
+        game = _gameService.GetGame();
         IsStarted = game.IsStarted;
         reports = game.Reports;
         if(selectedPlayer == null)
