@@ -13,5 +13,6 @@ namespace Pin.LiveSports.Core.Models
         public List<Report> Reports { get; set; }
         public bool IsStarted { get; set; }
         public Player SelectedPlayer { get; set; }
+        public string RoundNumber { get; set; }
     }
 }
