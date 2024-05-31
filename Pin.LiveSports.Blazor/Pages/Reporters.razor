@@ -12,12 +12,21 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-5">
-            <button class="btn btn-primary" @onclick="StartReport">Start verslag</button>
+            <button class="btn btn-primary" @onclick="StartGame">Start verslag</button>
             <PlayersList IsReporter="true"
-                         SetPlayer="(e) => SetSelectedPlayer(e)">
+                         SetPlayer="(e) => SetSelectedPlayer(e)"
+                         SetRound="(e) => SetSelectedRound(e)">
             </PlayersList>
+            <EditForm Model="report" OnValidSubmit="StartReport">
+                <InputText @bind-Value="report.Message" class="form-control mb-2" placeholder="Enter report message" />
+                <button class="btn btn-primary" type="submit">Start Ronde</button>
+            </EditForm>
             <EditForm Model="report" OnValidSubmit="SendGameStats">
                 <InputText @bind-Value="report.Message" class="form-control mb-2" placeholder="Enter report message" />
+                <button class="btn btn-primary" type="submit">Start Ronde</button>
+                <button class="btn btn-primary" type="submit">Verstuur</button>
+                <button class="btn btn-primary" type="submit">Verstuur</button>
+                <button class="btn btn-primary" type="submit">Verstuur</button>
                 <button class="btn btn-primary" type="submit">Verstuur</button>
             </EditForm>
         </div>
@@ -37,8 +46,10 @@
     private List<Viewer> viewers = new List<Viewer>();
     private HubConnection? hubConnection;
     private Report report = new Report();
-    private Player selectedPlayer = new Player();
     private List<Report> reports = new List<Report>();
+
+    private string roundNumber;
+    private Game game = new Game();
 
     protected override async Task OnInitializedAsync()
     {
@@ -57,6 +68,7 @@
         });
 
         await hubConnection.StartAsync();
+        game = _gameService.GetGame();
     }
 
     private void LoadViewers()
@@ -69,22 +81,50 @@
         if (hubConnection is not null)
         {
             reports.Add(report);
-            await hubConnection.SendAsync(nameof(GameHub.SendReport), report, selectedPlayer);
+            await hubConnection.SendAsync(nameof(GameHub.SendReport), report);
         }
         report = new Report();
     }
 
-    private async Task StartReport()
+    private async Task StartGame()
     {
         if (hubConnection is not null)
         {
+            game.IsStarted = true;
             await hubConnection.SendAsync(nameof(GameHub.StartReport));
+        }
+    }
+
+    private async Task StartReport()
+    {
+        if (game.SelectedPlayer == null)
+        {
+            Feedback = $"Gelieve een speler en ronde te selecteren";
+            LoadViewers();
+            await InvokeAsync(StateHasChanged);
+            await Task.Delay(3000);
+            Feedback = string.Empty;
+            await InvokeAsync(StateHasChanged);
+        }
+        else
+        {
+            if (hubConnection is not null)
+            {
+                reports.Add(report);
+                await hubConnection.SendAsync(nameof(GameHub.SendReport), report);
+            }
+            report = new Report();
         }
     }
 
     private void SetSelectedPlayer(ChangeEventArgs e)
     {
-        selectedPlayer = _gameService.GetGame().Players.FirstOrDefault(p => p.FullName == e.Value.ToString());
-        _gameService.SetSelectedPlayer(selectedPlayer);
+        game.SelectedPlayer = game.Players.FirstOrDefault(p => p.FullName == e.Value.ToString());
+    }
+
+    private void SetSelectedRound(ChangeEventArgs e)
+    {
+        roundNumber = e.Value.ToString();
+        report.RoundNumber = roundNumber;
     }
 }
