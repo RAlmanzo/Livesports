@@ -3,6 +3,8 @@
 
 @inject IGameService _gameService
 
+<h3>Spelers</h3>
+
 <table class="table" style="border:double">
     <thead>
         <tr>
@@ -10,7 +12,7 @@
             <th>Land</th>
             <th>Naam</th>
             <th>Straftijd</th>
-            <th>Beste tijd</th>
+            <th>Tijd</th>
         </tr>
     </thead>
     <tbody>
@@ -29,8 +31,36 @@
     </tbody>
 </table>
 
+@if (IsReporter)
+{
+    <div>
+        <select @onchange="e => SetPlayer.InvokeAsync(e)">
+            <option value="">Selecteer speler</option>
+            @foreach (var player in _players)
+            {
+                <option value="@player.FullName">@player.FullName</option>
+            }
+        </select>
+
+        <select>
+            <option value="">Selecteer ronde</option>
+            @foreach (var player in _players)
+            {
+                <option value="@player.FullName">@player.FullName</option>
+            }
+        </select>
+    </div>
+}
+
+
+
 @code {
     private List<Player> _players = new List<Player>();
+
+    [Parameter]
+    public bool IsReporter { get; set; } = false;
+    [Parameter]
+    public EventCallback<ChangeEventArgs> SetPlayer { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
