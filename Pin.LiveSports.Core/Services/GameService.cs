@@ -54,7 +54,12 @@ namespace Pin.LiveSports.Core.Services
 
         public void SetGameIsStarted() 
         {
-            games.FirstOrDefault().IsStarted = true;
+            GetGame().IsStarted = true;
+        }
+
+        public void SetSelectedPlayer(Player player)
+        {
+            GetGame().SelectedPlayer = player;
         }
     }
 }

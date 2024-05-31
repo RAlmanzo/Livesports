@@ -15,5 +15,6 @@ namespace Pin.LiveSports.Core.Services.Interfaces
         Game GetGame();
         void SetGameIsStarted();
         void AddReport(Report report);
+        void SetSelectedPlayer(Player player);
     }
 }
