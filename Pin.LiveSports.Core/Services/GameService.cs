@@ -11,6 +11,7 @@ namespace Pin.LiveSports.Core.Services
 {
     public class GameService : IGameService
     {
+        private List<Game> games = new List<Game>();
         private List<Viewer> viewers;
         private List<Player> players;
 
@@ -25,6 +26,9 @@ namespace Pin.LiveSports.Core.Services
                 new Player{Position = "-", FullName = "Jakub Brzezinski", Country = "Polen", CountryFlagIcon = null, GameRounds = null},
                 new Player{Position = "-", FullName = "Hannes Aigner", Country = "Duitsland", CountryFlagIcon = null, GameRounds = null},
             };
+
+            var game = new Game { Players = players };
+            games.Add(game);
         }
 
         public void AddViewer(Viewer viewer)
@@ -37,9 +41,14 @@ namespace Pin.LiveSports.Core.Services
             return viewers;
         }
 
-        public List<Player> GetAllPlayers()
+        public Game GetGame()
         {
-            return players;
+            return games.FirstOrDefault();
+        }
+
+        public void SetGameIsStarted() 
+        {
+            games.FirstOrDefault().IsStarted = true;
         }
     }
 }
