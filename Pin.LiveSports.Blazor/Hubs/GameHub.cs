@@ -29,7 +29,8 @@ namespace Pin.LiveSports.Blazor.Hubs
 
         public async Task SendReport(Report report, Player player)
         {
-            await Clients.Others.SendAsync("ReceiveMessage", report, player);
+            _gameService.AddReport(report);
+            await Clients.Others.SendAsync("ReceiveMessage", player);
         }
 
         public async Task StartReport()
