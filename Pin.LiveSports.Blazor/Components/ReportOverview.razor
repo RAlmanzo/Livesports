@@ -3,7 +3,7 @@
 
 @inject NavigationManager Navigation
 
-@foreach (var report in reports)
+@foreach (var report in Reports)
 {
     <div>
         <div class="card" >@report.Message</div>
@@ -11,25 +11,6 @@
 }
 
 @code {
-    private List<Report> reports = new List<Report>();
-    private HubConnection? hubConnection;
-
-    protected override async Task OnInitializedAsync()
-    {
-        hubConnection = new HubConnectionBuilder()
-            .WithUrl(Navigation.ToAbsoluteUri("/gamehub"))
-            .Build();
-
-        hubConnection.On<Report>("ReceiveMessage", (report) =>
-        {
-            Report newReport = new Report();
-            newReport.Message = report.Message;
-
-            reports.Add(newReport);
-
-            InvokeAsync(StateHasChanged);
-        });
-
-        await hubConnection.StartAsync();
-    }
+    [Parameter]
+    public List<Report> Reports { get; set; } = new List<Report>();
 }
