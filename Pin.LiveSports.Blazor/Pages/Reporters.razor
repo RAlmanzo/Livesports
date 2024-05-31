@@ -85,5 +85,6 @@
     private void SetSelectedPlayer(ChangeEventArgs e)
     {
         selectedPlayer = _gameService.GetGame().Players.FirstOrDefault(p => p.FullName == e.Value.ToString());
+        _gameService.SetSelectedPlayer(selectedPlayer);
     }
 }
