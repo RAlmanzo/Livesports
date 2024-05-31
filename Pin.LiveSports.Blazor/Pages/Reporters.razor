@@ -9,22 +9,24 @@
 @inject NavigationManager Navigation
 @inject IGameService _gameService
 
-<h3>Reporters</h3>
-
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-5">
-            <PlayersList></PlayersList>
+            <button class="btn btn-primary" @onclick="StartReport">Start verslag</button>
+            <PlayersList IsReporter="true"
+                         SetPlayer="(e) => SetSelectedPlayer(e)">
+            </PlayersList>
             <EditForm Model="report" OnValidSubmit="SendGameStats">
                 <InputText @bind-Value="report.Message" class="form-control mb-2" placeholder="Enter report message" />
                 <button class="btn btn-primary" type="submit">Verstuur</button>
             </EditForm>
         </div>
         <div class="col-md-5" style="border:double; height:500px">
-            <ReportOverview></ReportOverview>
+            <ReportOverview Reports="reports"></ReportOverview>
         </div>
         <div class="col-md-2">
-            <ViewersList Viewers="viewers" Feedback="@Feedback"></ViewersList>         
+            <img src="images/parcour.png" style="height:500px" />
+            <ViewersList Viewers="viewers" Feedback="@Feedback"></ViewersList>
         </div>
     </div>
 </div>
@@ -35,6 +37,8 @@
     private List<Viewer> viewers = new List<Viewer>();
     private HubConnection? hubConnection;
     private Report report = new Report();
+    private Player selectedPlayer = new Player();
+    private List<Report> reports = new List<Report>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -64,8 +68,22 @@
     {
         if (hubConnection is not null)
         {
-            await hubConnection.SendAsync(nameof(GameHub.SendReport), report);
+            reports.Add(report);
+            await hubConnection.SendAsync(nameof(GameHub.SendReport), report, selectedPlayer);
         }
         report = new Report();
+    }
+
+    private async Task StartReport()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.SendAsync(nameof(GameHub.StartReport));
+        }
+    }
+
+    private void SetSelectedPlayer(ChangeEventArgs e)
+    {
+        selectedPlayer = _gameService.GetAllPlayers().FirstOrDefault(p => p.FullName == e.Value.ToString());
     }
 }
