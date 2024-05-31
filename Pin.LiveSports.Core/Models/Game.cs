@@ -11,5 +11,6 @@ namespace Pin.LiveSports.Core.Models
         public List<Player> Players { get; set; }
         public List<Report> Reports { get; set; }
         public bool IsStarted { get; set; }
+        public Player SelectedPlayer { get; set; }
     }
 }
