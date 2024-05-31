@@ -27,15 +27,14 @@ namespace Pin.LiveSports.Blazor.Hubs
             await Clients.Others.SendAsync("NewViewerAddedToViewerList", viewerName);
         }
 
-        public async Task SendReport(Report report, Player player)
+        public async Task SendReport(Report report)
         {
             _gameService.AddReport(report);
-            await Clients.Others.SendAsync("ReceiveMessage", player);
+            await Clients.Others.SendAsync("ReceiveMessage");
         }
 
         public async Task StartReport()
         {
-            _gameService.SetGameIsStarted();
             await Clients.Others.SendAsync("ReportStarted");
         }
     }
