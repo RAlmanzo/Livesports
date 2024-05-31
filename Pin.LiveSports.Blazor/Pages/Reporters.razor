@@ -68,6 +68,8 @@
     {
         if (hubConnection is not null)
         {
+            //the add in gamehub doen!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             reports.Add(report);
             await hubConnection.SendAsync(nameof(GameHub.SendReport), report, selectedPlayer);
         }
@@ -84,6 +86,6 @@
 
     private void SetSelectedPlayer(ChangeEventArgs e)
     {
-        selectedPlayer = _gameService.GetAllPlayers().FirstOrDefault(p => p.FullName == e.Value.ToString());
+        selectedPlayer = _gameService.GetGame().Players.FirstOrDefault(p => p.FullName == e.Value.ToString());
     }
 }

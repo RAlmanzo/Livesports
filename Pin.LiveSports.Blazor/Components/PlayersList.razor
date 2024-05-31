@@ -64,7 +64,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _players = _gameService.GetAllPlayers();
+        _players = _gameService.GetGame().Players;
         await InvokeAsync(StateHasChanged);
     }
 }
