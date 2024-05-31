@@ -23,6 +23,20 @@ else
         <div class="row">
             <div class="col-md-5">
                 <PlayersList></PlayersList>
+                @if (selectedPlayer != null)
+                {
+                    <div>
+                        <div class="card" style="width: 18rem;">
+                            <!--tips: add .text-center,.text-right to the .card to change card text alignment-->
+                            <img src="..." class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <h5 class="card-title">@selectedPlayer.FullName</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+                                <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                            </div>
+                        </div>
+                    </div>
+                }
             </div>
             <div class="col-md-5" style="border:double; height:700px">
                 <ReportOverview Reports="reports"></ReportOverview>
@@ -34,9 +48,6 @@ else
         </div>
     </div>
 }
-
-<style>
-</style>
 
 @code {
     public string Feedback { get; set; }
@@ -70,18 +81,21 @@ else
             await InvokeAsync(StateHasChanged);
         });
 
-        hubConnection.On<Report, Player>("ReceiveMessage", (report, player) =>
+        hubConnection.On<Player>("ReceiveMessage", (player) =>
         {
-            Report newReport = new Report();
-            newReport.Message = report.Message;
             selectedPlayer = player;
-
-            reports.Add(newReport);
-
             InvokeAsync(StateHasChanged);
         });
 
         await hubConnection.StartAsync();
+
+        var game = _gameService.GetGame();
+        IsStarted = game.IsStarted;
+        reports = game.Reports;
+        if(selectedPlayer == null)
+        {
+            selectedPlayer = _gameService.GetGame().SelectedPlayer;
+        }
     }
 
     private async Task AddViewer()
