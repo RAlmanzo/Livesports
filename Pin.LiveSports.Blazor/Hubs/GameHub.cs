@@ -34,6 +34,7 @@ namespace Pin.LiveSports.Blazor.Hubs
 
         public async Task StartReport()
         {
+            _gameService.SetGameIsStarted();
             await Clients.Others.SendAsync("ReportStarted");
         }
     }
