@@ -27,7 +27,7 @@ namespace Pin.LiveSports.Core.Services
                 new Player{Position = "-", FullName = "Hannes Aigner", Country = "Duitsland", CountryFlagIcon = null, GameRounds = null},
             };
 
-            var game = new Game { Players = players };
+            var game = new Game {Name = "Lee Valley White Water Centre", Players = players };
             game.Reports = new List<Report>();
             games.Add(game);
         }
@@ -50,16 +50,6 @@ namespace Pin.LiveSports.Core.Services
         public Game GetGame()
         {
             return games.FirstOrDefault();
-        }
-
-        public void SetGameIsStarted() 
-        {
-            GetGame().IsStarted = true;
-        }
-
-        public void SetSelectedPlayer(Player player)
-        {
-            GetGame().SelectedPlayer = player;
         }
     }
 }

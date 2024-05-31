@@ -13,8 +13,6 @@ namespace Pin.LiveSports.Core.Services.Interfaces
         void AddViewer(Viewer viewer);
         List<Viewer> GetAllViewers();
         Game GetGame();
-        void SetGameIsStarted();
         void AddReport(Report report);
-        void SetSelectedPlayer(Player player);
     }
 }
