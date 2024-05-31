@@ -9,24 +9,26 @@
 @inject NavigationManager Navigation
 @inject IGameService _gameService
 
-
 @if (!IsJoined)
 {
     <JoinGameReport Viewer="Viewer"
-                    OnJoin="AddViewer">
+                    OnJoin="AddViewer"
+                    OnStart="IsStarted">
     </JoinGameReport>
 }
 else
 {
+    <h2 style="text-align:center">Olympische spelen 2024 Frankrijk: wild water kajak</h2>
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-5">
                 <PlayersList></PlayersList>
             </div>
             <div class="col-md-5" style="border:double; height:700px">
-                <ReportOverview></ReportOverview>
+                <ReportOverview Reports="reports"></ReportOverview>
             </div>
             <div class="col-md-2">
+                <img src="images/parcour.png" style="height:500px" />
                 <ViewersList Viewers="viewers" Feedback="@Feedback"></ViewersList>
             </div>
         </div>
@@ -40,9 +42,12 @@ else
     public string Feedback { get; set; }
     private Viewer Viewer { get; set; } = new Viewer();
     public bool IsJoined { get; set; } = false;
+    public bool IsStarted { get; set; } = false;
 
     private HubConnection? hubConnection;
     private List<Viewer> viewers = new List<Viewer>();
+    private Player selectedPlayer;
+    private List<Report> reports = new List<Report>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -57,6 +62,23 @@ else
             await Task.Delay(3000);
             Feedback = string.Empty;
             await InvokeAsync(StateHasChanged);
+        });
+
+        hubConnection.On("ReportStarted", async () =>
+        {
+            IsStarted = true;
+            await InvokeAsync(StateHasChanged);
+        });
+
+        hubConnection.On<Report, Player>("ReceiveMessage", (report, player) =>
+        {
+            Report newReport = new Report();
+            newReport.Message = report.Message;
+            selectedPlayer = player;
+
+            reports.Add(newReport);
+
+            InvokeAsync(StateHasChanged);
         });
 
         await hubConnection.StartAsync();
