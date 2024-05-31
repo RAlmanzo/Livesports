@@ -28,7 +28,13 @@ namespace Pin.LiveSports.Core.Services
             };
 
             var game = new Game { Players = players };
+            game.Reports = new List<Report>();
             games.Add(game);
+        }
+
+        public void AddReport(Report report)
+        {
+            GetGame().Reports.Add(report);
         }
 
         public void AddViewer(Viewer viewer)
