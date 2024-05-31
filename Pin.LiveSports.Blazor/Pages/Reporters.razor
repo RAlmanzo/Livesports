@@ -17,18 +17,23 @@
                          SetPlayer="(e) => SetSelectedPlayer(e)"
                          SetRound="(e) => SetSelectedRound(e)">
             </PlayersList>
+            <div>
+                @errorMessage
+            </div>
             <EditForm Model="report" OnValidSubmit="StartReport">
-                <InputText @bind-Value="report.Message" class="form-control mb-2" placeholder="Enter report message" />
                 <button class="btn btn-primary" type="submit">Start Ronde</button>
             </EditForm>
-            <EditForm Model="report" OnValidSubmit="SendGameStats">
-                <InputText @bind-Value="report.Message" class="form-control mb-2" placeholder="Enter report message" />
-                <button class="btn btn-primary" type="submit">Start Ronde</button>
-                <button class="btn btn-primary" type="submit">Verstuur</button>
-                <button class="btn btn-primary" type="submit">Verstuur</button>
-                <button class="btn btn-primary" type="submit">Verstuur</button>
-                <button class="btn btn-primary" type="submit">Verstuur</button>
-            </EditForm>
+            @if (ReportHasStarted)
+            {
+                <EditForm Model="report" OnValidSubmit="SendGameStats">
+                    <InputText @bind-Value="report.Message" class="form-control mb-2" placeholder="Enter report message" />
+                    <button class="btn btn-primary" type="submit"></button>
+                    <button class="btn btn-primary" type="submit">Verstuur</button>
+                    <button class="btn btn-primary" type="submit">Verstuur</button>
+                    <button class="btn btn-primary" type="submit">Verstuur</button>
+                    <button class="btn btn-primary" type="submit">Verstuur</button>
+                </EditForm>
+            }
         </div>
         <div class="col-md-5" style="border:double; height:500px">
             <ReportOverview Reports="reports"></ReportOverview>
@@ -50,6 +55,8 @@
 
     private string roundNumber;
     private Game game = new Game();
+    private bool ReportHasStarted;
+    private string errorMessage;
 
     protected override async Task OnInitializedAsync()
     {
@@ -76,16 +83,6 @@
         viewers = _gameService.GetAllViewers();
     }
 
-    private async Task SendGameStats()
-    {
-        if (hubConnection is not null)
-        {
-            reports.Add(report);
-            await hubConnection.SendAsync(nameof(GameHub.SendReport), report);
-        }
-        report = new Report();
-    }
-
     private async Task StartGame()
     {
         if (hubConnection is not null)
@@ -99,22 +96,34 @@
     {
         if (game.SelectedPlayer == null)
         {
-            Feedback = $"Gelieve een speler en ronde te selecteren";
+            errorMessage = "Gelieve een speler en ronde te selecteren";
             LoadViewers();
             await InvokeAsync(StateHasChanged);
             await Task.Delay(3000);
-            Feedback = string.Empty;
+            errorMessage = string.Empty;
             await InvokeAsync(StateHasChanged);
         }
         else
         {
             if (hubConnection is not null)
             {
+                ReportHasStarted = true;
+                report.Message = $"Start ronde {game.RoundNumber}: {game.SelectedPlayer.FullName}";
                 reports.Add(report);
                 await hubConnection.SendAsync(nameof(GameHub.SendReport), report);
             }
             report = new Report();
         }
+    }
+
+    private async Task SendGameStats()
+    {
+        if (hubConnection is not null)
+        {
+            reports.Add(report);
+            await hubConnection.SendAsync(nameof(GameHub.SendReport), report);
+        }
+        report = new Report();
     }
 
     private void SetSelectedPlayer(ChangeEventArgs e)
@@ -124,7 +133,6 @@
 
     private void SetSelectedRound(ChangeEventArgs e)
     {
-        roundNumber = e.Value.ToString();
-        report.RoundNumber = roundNumber;
+        game.RoundNumber = e.Value.ToString();
     }
 }
