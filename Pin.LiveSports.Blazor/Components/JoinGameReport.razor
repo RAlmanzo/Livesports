@@ -1,15 +1,30 @@
-﻿
-@using Pin.LiveSports.Core.Models
+﻿@using Pin.LiveSports.Core.Models
 
-<EditForm Model="Viewer" OnValidSubmit="e => OnJoin.InvokeAsync()">
-    <InputText @bind-Value="Viewer.Name" />
-    <button type="submit">Join live report</button>
-</EditForm>
+<div class="position-relative">
+    <img src="images/LeeValley.png" class="img-fluid w-100" />
+    <div class="position-absolute top-50 start-50 translate-middle bg-light p-4 rounded shadow">
+        @if (OnStart)
+        {
+            <EditForm Model="Viewer" OnValidSubmit="e => OnJoin.InvokeAsync()">
+                <div class="mb-3">
+                    <InputText @bind-Value="Viewer.Name" class="form-control" placeholder="Enter your name" />
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Deelnemen</button>
+            </EditForm>
+        }
+        else
+        {
+            <h2>Welkom!</h2>
+            <h2>Live Verslag start binnenkort</h2>
+        }
+    </div>
+</div>
 
 @code {
     [Parameter]
     public Viewer Viewer { get; set; }
-
     [Parameter]
     public EventCallback OnJoin { get; set; }
+    [Parameter]
+    public bool OnStart { get; set; }
 }
