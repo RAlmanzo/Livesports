@@ -8,6 +8,7 @@ namespace Pin.LiveSports.Core.Models
 {
     public class Player
     {
+        public string Image {  get; set; }
         public string Position {  get; set; }
         public string FullName { get; set; }
         public string Country { get; set; }
