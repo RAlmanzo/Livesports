@@ -14,6 +14,7 @@
         <div class="col-md-5">
             <button class="btn btn-primary" @onclick="StartGame">Start verslag</button>
             <PlayersList IsReporter="true"
+                         Game="game"
                          SetPlayer="(e) => SetSelectedPlayer(e)"
                          SetRound="(e) => SetSelectedRound(e)">
             </PlayersList>
@@ -29,11 +30,12 @@
                     <button class="btn btn-danger" @onclick="SetPenalty">Straftijd</button>
                     <button class="btn btn-danger">Straftijd</button>
                 </div>
-                
+
 
                 @if (IsPenalty)
                 {
                     <PenaltyForm Report="report"
+                                 Game="game"
                                  OnSendPenalty="SendGameStats">
                     </PenaltyForm>
                 }
@@ -109,7 +111,7 @@
 
     private async Task StartReport()
     {
-        if (game.SelectedPlayer == null)
+        if (game.SelectedPlayer == null || string.IsNullOrWhiteSpace(game.RoundNumber))
         {
             errorMessage = "Gelieve een speler en ronde te selecteren";
             LoadViewers();
@@ -123,6 +125,7 @@
             if (hubConnection is not null)
             {
                 ReportHasStarted = true;
+
                 report.Message = $"Start ronde {game.RoundNumber}: {game.SelectedPlayer.FullName}";
                 reports.Add(report);
                 await hubConnection.SendAsync(nameof(GameHub.SendReport), report);
@@ -148,7 +151,15 @@
 
     private void SetSelectedPlayer(ChangeEventArgs e)
     {
-        game.SelectedPlayer = game.Players.FirstOrDefault(p => p.FullName == e.Value.ToString());
+        var player = game.Players.FirstOrDefault(p => p.FullName == e.Value.ToString());
+        player.GameRounds = new List<GameRound>();
+
+        if (!player.GameRounds.Any(r => r.RoundNumber == game.RoundNumber))
+        {
+            player.GameRounds.Add(new GameRound { RoundNumber = game.RoundNumber, PenaltyTime = new TimeSpan() });
+        }
+
+        game.SelectedPlayer = player;
     }
 
     private void SetSelectedRound(ChangeEventArgs e)
