@@ -9,5 +9,7 @@ namespace Pin.LiveSports.Core.Models
     public class Report
     {
         public string Message { get; set; }
+        public int PortNumber { get; set; }
+        public string PenaltyIcon { get; set; }
     }
 }
