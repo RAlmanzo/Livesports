@@ -25,13 +25,24 @@
             </EditForm>
             @if (ReportHasStarted)
             {
+
+                <button class="btn btn-danger" @onclick="SetPenalty">Straftijd</button>
+
+                @if (IsPenalty)
+                {
+                    <PenaltyForm Report="report"
+                                 OnSendPenalty=SendPortPenalty>
+                    </PenaltyForm>
+                }
+
                 <EditForm Model="report" OnValidSubmit="SendGameStats">
                     <InputText @bind-Value="report.Message" class="form-control mb-2" placeholder="Enter report message" />
-                    <button class="btn btn-primary" type="submit"></button>
-                    <button class="btn btn-primary" type="submit">Verstuur</button>
-                    <button class="btn btn-primary" type="submit">Verstuur</button>
-                    <button class="btn btn-primary" type="submit">Verstuur</button>
-                    <button class="btn btn-primary" type="submit">Verstuur</button>
+                    <button class="btn btn-primary" type="submit">Vis</button>
+                    <button class="btn btn-primary" type="submit">Crash</button>
+                    <button class="btn btn-primary" type="submit">Gezonken</button>
+                    <button class="btn btn-primary" type="submit">Gewond</button>
+                    <button class="btn btn-primary" type="submit">Einde</button>
+                    <button class="btn btn-primary" type="submit">Spell stilgelegd door obstakel</button>
                 </EditForm>
             }
         </div>
@@ -57,6 +68,7 @@
     private Game game = new Game();
     private bool ReportHasStarted;
     private string errorMessage;
+    private bool IsPenalty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -124,6 +136,37 @@
             await hubConnection.SendAsync(nameof(GameHub.SendReport), report);
         }
         report = new Report();
+    }
+
+    private async void SendPortPenalty(int penaltyType)
+    {
+        switch (penaltyType)
+        {
+            case 1:
+                report.Icon = "images/pen2green.gif";
+                await SendGameStats();
+                break;
+            case 2:
+                report.Icon = "images/pen2red.gif";
+                await SendGameStats();
+                break;
+            case 3:
+                report.Icon = "images/pen50green.gif";
+                await SendGameStats();
+                break;
+            case 4:
+                report.Icon = "images/pen50red.gif";
+                await SendGameStats();
+                break;
+            default:
+                Console.WriteLine("Unknown penalty");
+                break;
+        }
+    }
+
+    private void SetPenalty()
+    {
+        IsPenalty = !IsPenalty;
     }
 
     private void SetSelectedPlayer(ChangeEventArgs e)
