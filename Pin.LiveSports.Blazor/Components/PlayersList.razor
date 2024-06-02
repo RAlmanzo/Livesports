@@ -24,8 +24,22 @@
                     @player.Country
                 </td>
                 <td>@player.FullName</td>
-                <td></td>
-                <td></td>
+                @if (player.GameRounds != null)
+                {
+                    <td>@player.GameRounds.FirstOrDefault(r => r.RoundNumber == Game.RoundNumber).PenaltyTime</td>
+                }
+                else
+                {
+                    <td>@defaultTime</td>
+                }
+                @if (player.GameRounds != null)
+                {
+                    <td>@player.GameRounds.FirstOrDefault(r => r.RoundNumber == Game.RoundNumber).RoundTime</td>
+                }
+                else
+                {
+                    <td>@defaultTime</td>
+                }
             </tr>
         }
     </tbody>
@@ -34,13 +48,6 @@
 @if (IsReporter)
 {
     <div>
-        <select @onchange="e => SetPlayer.InvokeAsync(e)">
-            <option value="">Selecteer speler</option>
-            @foreach (var player in _players)
-            {
-                <option value="@player.FullName">@player.FullName</option>
-            }
-        </select>
         <select @onchange="e => SetRound.InvokeAsync(e)">
             <option value="">Selecteer ronde</option>
             @for (int i = 1; i < 3; i++)
@@ -48,13 +55,22 @@
                 <option value="@i">ronde: @i</option>
             }
         </select>
+        @if (!string.IsNullOrWhiteSpace(Game.RoundNumber))
+        {
+            <select @onchange="e => SetPlayer.InvokeAsync(e)">
+                <option value="">Selecteer speler</option>
+                @foreach (var player in _players)
+                {
+                    <option value="@player.FullName">@player.FullName</option>
+                }
+            </select>
+        }
     </div>
 }
 
-
-
 @code {
     private List<Player> _players = new List<Player>();
+    private TimeSpan defaultTime = new TimeSpan();
 
     [Parameter]
     public bool IsReporter { get; set; } = false;
@@ -62,6 +78,8 @@
     public EventCallback<ChangeEventArgs> SetPlayer { get; set; }
     [Parameter]
     public EventCallback<ChangeEventArgs> SetRound { get; set; }
+    [Parameter]
+    public Game Game { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
