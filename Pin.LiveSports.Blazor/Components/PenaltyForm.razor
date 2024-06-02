@@ -1,4 +1,6 @@
 ﻿@using Pin.LiveSports.Core.Models
+
+<label>@errorMessage</label>
 <div class="d-flex align-items-center mt-3">
     <div class="m-3">
         <EditForm Model="Report" OnValidSubmit="() =>SetPenaltyMessage(1)">
@@ -13,10 +15,8 @@
         </EditForm>
     </div>
 </div>
-
-<label>@errorMessage</label>
-<div class="d-flex align-items-center mt-3">
-    <div class="m-3">
+<div class="d-flex align-items-center mt-1">
+    <div class="m-1">
         <EditForm Model="Report" OnValidSubmit="() =>SetPenaltyMessage(3)">   
             <div class="d-flex">
                 <InputText @bind-Value="message" class="form-control mb-2" placeholder="Enter report message" />
@@ -43,32 +43,44 @@
 
     private async void SetPenaltyMessage(int penaltyType)
     {
-        Report.PortNumber = portNumber;
-        portNumber = 0;
-
-        if (string.IsNullOrWhiteSpace(message))
-        {
-            if (penaltyType == 1 || penaltyType == 2)
-            {
-                Report.Message = $"Poort: {Report.PortNumber} werd geraakt";
-                SendReport(penaltyType);
-            }
-            else
-            {
-                portNumber = Report.PortNumber;
-                errorMessage = "Gelieve commentaar in te vullen";
-                await InvokeAsync(StateHasChanged);
-                await Task.Delay(3000);
-                errorMessage = string.Empty;
-                await InvokeAsync(StateHasChanged);
-            }
+        if(portNumber < 1 || portNumber > 22)
+        {          
+            errorMessage = "Gelieve een poort tussen 1 tem 22 te kiezen!";
+            await InvokeAsync(StateHasChanged);
+            await Task.Delay(1000);
+            errorMessage = string.Empty;
+            await InvokeAsync(StateHasChanged);
         }
         else
         {
-            Report.Message = $"Fout op poort {Report.PortNumber}: {message}";
-            SendReport(penaltyType);
+            Report.PortNumber = portNumber;
+            portNumber = 0;
+
+            if (string.IsNullOrWhiteSpace(message))
+            {
+                if (penaltyType == 1 || penaltyType == 2)
+                {
+                    Report.Message = $"Poort: {Report.PortNumber} werd geraakt";
+                    SendReport(penaltyType);
+                }
+                else
+                {
+                    portNumber = Report.PortNumber;
+
+                    errorMessage = "Gelieve commentaar in te vullen";
+                    await InvokeAsync(StateHasChanged);
+                    await Task.Delay(1000);
+                    errorMessage = string.Empty;
+                    await InvokeAsync(StateHasChanged);
+                }
+            }
+            else
+            {
+                Report.Message = $"Fout op poort {Report.PortNumber}: {message}";
+                SendReport(penaltyType);
+            }
+            message = null;
         }
-        message = null;
     }
 
     private async void SendReport(int penaltyType)
