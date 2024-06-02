@@ -1,27 +1,46 @@
 ﻿@using Pin.LiveSports.Core.Models
-<div class="d-flex align-items-center">
-    <EditForm Model="Report" OnValidSubmit="() => OnSendPenalty.InvokeAsync(1)">
-        <label>Bericht</label>
-        <InputText @bind-Value="Report.Message" class="form-control mb-2" placeholder="Enter report message" />
-        <button class="btn btn-success" type="submit">+2'</button>
-    </EditForm>
-    <EditForm Model="Report" OnValidSubmit="() => OnSendPenalty.InvokeAsync(2)">
-        <label>Vul poort in</label>
-        <InputText @bind-Value="Report.Message" class="form-control mb-2" placeholder="Enter report message" />
-        <button class="btn btn-danger" type="submit">+2'</button>
-    </EditForm>
+<div class="d-flex align-items-center mt-3">
+    <div class="m-3">
+        <EditForm Model="Report" OnValidSubmit="() => OnSendPenalty.InvokeAsync(1)">
+            <label>Poortnummer</label>
+            <InputNumber @bind-Value="Report.PortNumber" style="width: 45px;"></InputNumber>
+            <button class="btn btn-success" type="submit">+2'</button>
+        </EditForm>
+    </div>
+    <div>
+        <EditForm Model="Report" OnValidSubmit="() => OnSendPenalty.InvokeAsync(3)">
+            <div>
+                <label>Poortnummer</label>
+                <InputNumber @bind-Value="Report.PortNumber" style="width: 45px;"></InputNumber>
+            </div>
+            <div class="d-flex">
+                <InputText @bind-Value="Report.Message" class="form-control mb-2" placeholder="Enter report message" />
+                <button class="btn btn-success" type="submit">+50'</button>
+            </div>
+        </EditForm>
+    </div>
 </div>
-<div class="d-flex align-items-center">
-    <EditForm Model="Report" OnValidSubmit="() => OnSendPenalty.InvokeAsync(3)">
-        <label>Vul poort in</label>
-        <InputText @bind-Value="Report.Message" class="form-control mb-2" placeholder="Enter report message" />
-        <button class="btn btn-success" type="submit">+50'</button>
-    </EditForm>
-    <EditForm Model="Report" OnValidSubmit="() => OnSendPenalty.InvokeAsync(4)">
-        <label>Vul poort in</label>
-        <InputText @bind-Value="Report.Message" class="form-control mb-2" placeholder="Enter report message" />
-        <button class="btn btn-danger" type="submit">+50'</button>
-    </EditForm>
+
+<div class="d-flex align-items-center mt-3">
+    <div class="m-3">
+        <EditForm Model="Report" OnValidSubmit="() => OnSendPenalty.InvokeAsync(2)">
+            <label>Poortnummer</label>
+            <InputNumber @bind-Value="Report.PortNumber" style="width: 45px;" />
+            <button class="btn btn-danger" type="submit">+2'</button>
+        </EditForm>
+    </div>
+    <div>
+        <EditForm Model="Report" OnValidSubmit="() => OnSendPenalty.InvokeAsync(4)">
+            <div>
+                <label>Poortnummer</label>
+                <InputNumber @bind-Value="Report.PortNumber" style="width: 45px;"></InputNumber>
+            </div>
+            <div class="d-flex">
+                <InputText @bind-Value="Report.Message" class="form-control mb-2" placeholder="Enter report message" />
+                <button class="btn btn-danger" type="submit">+50'</button>
+            </div>
+        </EditForm>
+    </div>
 </div>
 
 @code {
