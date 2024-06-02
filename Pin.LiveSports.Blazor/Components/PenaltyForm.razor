@@ -36,6 +36,8 @@
     public Report Report { get; set; }
     [Parameter]
     public EventCallback<int> OnSendPenalty { get; set; }
+    [Parameter]
+    public Game Game { get; set; }
 
     private int portNumber;
     private string message;
@@ -44,7 +46,7 @@
     private async void SetPenaltyMessage(int penaltyType)
     {
         if(portNumber < 1 || portNumber > 22)
-        {          
+        {
             errorMessage = "Gelieve een poort tussen 1 tem 22 te kiezen!";
             await InvokeAsync(StateHasChanged);
             await Task.Delay(1000);
@@ -85,22 +87,29 @@
 
     private async void SendReport(int penaltyType)
     {
+        var player = Game.SelectedPlayer;
+        var gameRound = player.GameRounds.FirstOrDefault(r => r.RoundNumber == Game.RoundNumber);
+
         switch (penaltyType)
         {
             case 1:
                 Report.PenaltyIcon = "images/pen2green.gif";
+                gameRound.PenaltyTime = gameRound.PenaltyTime.Add(TimeSpan.FromSeconds(2));
                 await OnSendPenalty.InvokeAsync();
                 break;
             case 2:
                 Report.PenaltyIcon = "images/pen2red.gif";
+                gameRound.PenaltyTime = gameRound.PenaltyTime.Add(TimeSpan.FromSeconds(2));
                 await OnSendPenalty.InvokeAsync();
                 break;
             case 3:
                 Report.PenaltyIcon = "images/pen50green.gif";
+                gameRound.PenaltyTime = gameRound.PenaltyTime.Add(TimeSpan.FromSeconds(50));
                 await OnSendPenalty.InvokeAsync();
                 break;
             case 4:
                 Report.PenaltyIcon = "images/pen50red.gif";
+                gameRound.PenaltyTime = gameRound.PenaltyTime.Add(TimeSpan.FromSeconds(50));
                 await OnSendPenalty.InvokeAsync();
                 break;
             default:
