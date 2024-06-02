@@ -25,13 +25,16 @@
             </EditForm>
             @if (ReportHasStarted)
             {
-
-                <button class="btn btn-danger" @onclick="SetPenalty">Straftijd</button>
+                <div class="mt-2">
+                    <button class="btn btn-danger" @onclick="SetPenalty">Straftijd</button>
+                    <button class="btn btn-danger">Straftijd</button>
+                </div>
+                
 
                 @if (IsPenalty)
                 {
                     <PenaltyForm Report="report"
-                                 OnSendPenalty=SendPortPenalty>
+                                 OnSendPenalty="SendGameStats">
                     </PenaltyForm>
                 }
 
@@ -136,32 +139,6 @@
             await hubConnection.SendAsync(nameof(GameHub.SendReport), report);
         }
         report = new Report();
-    }
-
-    private async void SendPortPenalty(int penaltyType)
-    {
-        switch (penaltyType)
-        {
-            case 1:
-                report.PenaltyIcon = "images/pen2green.gif";
-                await SendGameStats();
-                break;
-            case 2:
-                report.PenaltyIcon = "images/pen2red.gif";
-                await SendGameStats();
-                break;
-            case 3:
-                report.PenaltyIcon = "images/pen50green.gif";
-                await SendGameStats();
-                break;
-            case 4:
-                report.PenaltyIcon = "images/pen50red.gif";
-                await SendGameStats();
-                break;
-            default:
-                Console.WriteLine("Unknown penalty");
-                break;
-        }
     }
 
     private void SetPenalty()
