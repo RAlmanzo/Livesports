@@ -161,6 +161,12 @@
             var gameRound = game.SelectedPlayer.GameRounds.FirstOrDefault(r => r.RoundNumber == game.RoundNumber);
             gameRound.RoundTime = timeSpan + gameRound.PenaltyTime;
 
+            var firstGameRound = game.SelectedPlayer.GameRounds.FirstOrDefault(r => r.RoundNumber == "1");
+            if (gameRound.RoundTime < firstGameRound.RoundTime)
+            {
+                game.SelectedPlayer.BestTime = gameRound.RoundTime;
+            }
+
             report.Message = $"Einde rond {game.RoundNumber} voor {game.SelectedPlayer.FullName} met een tijd van {gameRound.RoundTime.ToString(@"mm\:ss")}";
             report.Image = "images/stoprace.png";
             _gameService.AddReport(report);
@@ -239,10 +245,15 @@
     private void SetSelectedPlayer(ChangeEventArgs e)
     {
         var player = game.Players.FirstOrDefault(p => p.FullName == e.Value.ToString());
-        player.GameRounds = new List<GameRound>();
+
+        if(player.GameRounds == null)
+        {
+            player.GameRounds = new List<GameRound>();
+        }
 
         if (!player.GameRounds.Any(r => r.RoundNumber == game.RoundNumber))
         {
+
             player.GameRounds.Add(new GameRound { RoundNumber = game.RoundNumber, PenaltyTime = new TimeSpan() });
         }
 
