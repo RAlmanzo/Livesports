@@ -29,8 +29,6 @@
 
                 @if (ReportHasStarted)
                 {
-
-
                     <div class="mt-2">
                         @if (!raceHasStarted)
                         {
@@ -100,6 +98,7 @@
     private Timer timer;
     private TimeSpan timeSpan;
     private DateTime startTime;
+    private bool refresh;
 
     protected override async Task OnInitializedAsync()
     {
@@ -120,6 +119,7 @@
         await hubConnection.StartAsync();
 
         game = _gameService.GetGame();
+        game.Players = game.Players.OrderBy(p => p.BestTime.ToString(@"mm\:ss")).ToList();
         reports = game.Reports;
         ReportHasStarted = game.IsStarted;
     }
@@ -153,16 +153,16 @@
 
     private async void StopPlayerRound()
     {
-        raceHasStarted = false;
         if (hubConnection is not null)
         {
             StopTimer();
-            ReportHasStarted = true;
+            ReportHasStarted = false;
+            raceHasStarted = false;
             var gameRound = game.SelectedPlayer.GameRounds.FirstOrDefault(r => r.RoundNumber == game.RoundNumber);
             gameRound.RoundTime = timeSpan + gameRound.PenaltyTime;
 
             var firstGameRound = game.SelectedPlayer.GameRounds.FirstOrDefault(r => r.RoundNumber == "1");
-            if (gameRound.RoundTime < firstGameRound.RoundTime)
+            if (gameRound.RoundTime <= firstGameRound.RoundTime)
             {
                 game.SelectedPlayer.BestTime = gameRound.RoundTime;
             }
@@ -184,7 +184,6 @@
             await InvokeAsync(StateHasChanged);
             await Task.Delay(3000);
             errorMessage = string.Empty;
-            await InvokeAsync(StateHasChanged);
         }
         else
         {
@@ -246,7 +245,7 @@
     {
         var player = game.Players.FirstOrDefault(p => p.FullName == e.Value.ToString());
 
-        if(player.GameRounds == null)
+        if (player.GameRounds == null)
         {
             player.GameRounds = new List<GameRound>();
         }

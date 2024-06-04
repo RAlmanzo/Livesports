@@ -91,6 +91,7 @@ else
         hubConnection.On<Report>("ReceiveMessage", async (report) =>
         {
             game = _gameService.GetGame();
+            game.Players = game.Players.OrderBy(p => p.BestTime.ToString(@"mm\:ss")).ToList();
             selectedPlayer = game.SelectedPlayer;
             await InvokeAsync(StateHasChanged);
         });

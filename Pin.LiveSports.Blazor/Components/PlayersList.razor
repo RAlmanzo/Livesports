@@ -88,7 +88,7 @@
     protected override async Task OnInitializedAsync()
     {
         Game = _gameService.GetGame();
-
+        _players = Game.Players = Game.Players.OrderBy(p => p.BestTime.ToString(@"mm\:ss")).ToList();
         await InvokeAsync(StateHasChanged);
     }
 }
