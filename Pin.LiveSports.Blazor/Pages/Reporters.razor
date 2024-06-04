@@ -162,9 +162,12 @@
             gameRound.RoundTime = timeSpan + gameRound.PenaltyTime;
 
             var firstGameRound = game.SelectedPlayer.GameRounds.FirstOrDefault(r => r.RoundNumber == "1");
-            if (gameRound.RoundTime <= firstGameRound.RoundTime)
+            if(firstGameRound != null)
             {
-                game.SelectedPlayer.BestTime = gameRound.RoundTime;
+                if (gameRound.RoundTime <= firstGameRound.RoundTime)
+                {
+                    game.SelectedPlayer.BestTime = gameRound.RoundTime;
+                }
             }
 
             report.Message = $"Einde rond {game.RoundNumber} voor {game.SelectedPlayer.FullName} met een tijd van {gameRound.RoundTime.ToString(@"mm\:ss")}";
