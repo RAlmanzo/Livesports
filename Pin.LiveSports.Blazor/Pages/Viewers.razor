@@ -32,8 +32,8 @@ else
                             <img src=@selectedPlayer.Image class="card-img-top" alt="...">
                             <div class="card-body">
                                 <h5 class="card-title">@selectedPlayer.FullName</h5>
-                                <p class="card-text">@selectedPlayer.GameRounds.FirstOrDefault(r => r.RoundNumber == game.RoundNumber).PenaltyTime</p>
-                                @*<p class="card-text">@selectedPlayer.GameRounds.FirstOrDefault(r => r.RoundNumber == game.RoundNumber).RoundTime</p>*@
+                                <p class="card-text">@selectedPlayer.GameRounds.FirstOrDefault(r => r.RoundNumber == game.RoundNumber).PenaltyTime.ToString(@"mm\:ss")</p>
+                                <p class="card-text">@selectedPlayer.GameRounds.FirstOrDefault(r => r.RoundNumber == game.RoundNumber).RoundTime.ToString(@"mm\:ss")</p>
                             </div>
                         </div>
                     </div>
@@ -83,9 +83,10 @@ else
             await InvokeAsync(StateHasChanged);
         });
 
-        hubConnection.On("ReceiveMessage", async () =>
+        hubConnection.On<Report>("ReceiveMessage", async (report) =>
         {
-            selectedPlayer = _gameService.GetGame().SelectedPlayer;
+            game = _gameService.GetGame();
+            selectedPlayer = game.SelectedPlayer;
             await InvokeAsync(StateHasChanged);
         });
 
@@ -96,7 +97,7 @@ else
         reports = game.Reports;
         if(selectedPlayer == null)
         {
-            selectedPlayer = _gameService.GetGame().SelectedPlayer;
+            selectedPlayer = game.SelectedPlayer;
         }
     }
 
