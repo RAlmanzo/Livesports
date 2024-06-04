@@ -1,14 +1,13 @@
 ﻿@using Pin.LiveSports.Core.Models
-@using Microsoft.AspNetCore.SignalR.Client
 
 @inject NavigationManager Navigation
 
 @foreach (var report in Reports)
-{
-    <div class="d-flex align-items-center">
+{   
+    <div class="d-flex align-items-center m-3">
         <img src="@report.Image" class="img-fluid" style="max-width: 75px; max-height: 75px;" />
         <img src="@report.PenaltyIcon" class="img-fluid" style="max-width: 75px; max-height: 75px;" />
-        <div class="card">@report.Message</div>
+        <div class="m-3">@report.Message</div>
     </div>
 }
 
