@@ -19,7 +19,7 @@
         @foreach (var player in Game.Players)
         {
             <tr>
-                <td>@player.Position</td>
+                <td>@Game.Players.IndexOf(player)</td>
                 <td>
                     <img src=@player.CountryFlagIcon class="img-fluid" style="max-width: 50px; max-height: 50px;" /> @player.Country
                 </td>
@@ -59,7 +59,7 @@
             {
                 <select @onchange="e => SetPlayer.InvokeAsync(e)">
                     <option value="">Selecteer speler</option>
-                    @foreach (var player in Game.Players)
+                    @foreach (var player in _players)
                     {
                         <option value="@player.FullName">@player.FullName</option>
                     }
@@ -88,7 +88,8 @@
     protected override async Task OnInitializedAsync()
     {
         Game = _gameService.GetGame();
-        _players = Game.Players = Game.Players.OrderBy(p => p.BestTime.ToString(@"mm\:ss")).ToList();
+        _players = Game.Players;
+        Game.Players = Game.Players.OrderBy(p => p.BestTime.ToString(@"mm\:ss")).ToList();
         await InvokeAsync(StateHasChanged);
     }
 }
