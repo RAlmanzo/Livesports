@@ -27,8 +27,8 @@
             @if (ReportHasStarted)
             {
                 <div class="mt-2">
+                    <button class="btn btn-primary" @onclick="SetMessage">Verstuur bericht</button>
                     <button class="btn btn-danger" @onclick="SetPenalty">Straftijd</button>
-                    <button class="btn btn-danger">Straftijd</button>
                 </div>
 
 
@@ -40,15 +40,22 @@
                     </PenaltyForm>
                 }
 
-                <EditForm Model="report" OnValidSubmit="SendGameStats">
-                    <InputText @bind-Value="report.Message" class="form-control mb-2" placeholder="Enter report message" />
-                    <button class="btn btn-primary" type="submit">Vis</button>
-                    <button class="btn btn-primary" type="submit">Crash</button>
-                    <button class="btn btn-primary" type="submit">Gezonken</button>
-                    <button class="btn btn-primary" type="submit">Gewond</button>
-                    <button class="btn btn-primary" type="submit">Einde</button>
-                    <button class="btn btn-primary" type="submit">Spell stilgelegd door obstakel</button>
-                </EditForm>
+                if (IsMessage)
+                {
+                    <MessageForm Report="report"
+                                 OnSend="SendGameStats">
+                    </MessageForm>
+                    <EditForm Model="report" OnValidSubmit="SendGameStats">
+                        <InputText @bind-Value="report.Message" class="form-control mb-2" placeholder="Enter report message" />
+                        <button class="btn btn-primary" type="submit">Vis</button>
+                        <button class="btn btn-primary" type="submit">Crash</button>
+                        <button class="btn btn-primary" type="submit">Gezonken</button>
+                        <button class="btn btn-primary" type="submit">Gewond</button>
+                        <button class="btn btn-primary" type="submit">Einde</button>
+                        <button class="btn btn-primary" type="submit">Spell stilgelegd door obstakel</button>
+                    </EditForm>
+                }
+
             }
         </div>
         <div class="col-md-5" style="border:double; height:500px">
@@ -74,6 +81,7 @@
     private bool ReportHasStarted;
     private string errorMessage;
     private bool IsPenalty;
+    private bool IsMessage;
 
     protected override async Task OnInitializedAsync()
     {
@@ -93,6 +101,8 @@
 
         await hubConnection.StartAsync();
         game = _gameService.GetGame();
+        reports = game.Reports;
+        ReportHasStarted = true;
     }
 
     private void LoadViewers()
@@ -127,7 +137,7 @@
                 ReportHasStarted = true;
 
                 report.Message = $"Start ronde {game.RoundNumber}: {game.SelectedPlayer.FullName}";
-                reports.Add(report);
+                _gameService.AddReport(report);
                 await hubConnection.SendAsync(nameof(GameHub.SendReport), report);
             }
             report = new Report();
@@ -138,7 +148,7 @@
     {
         if (hubConnection is not null)
         {
-            reports.Add(report);
+            _gameService.AddReport(report);
             await hubConnection.SendAsync(nameof(GameHub.SendReport), report);
         }
         report = new Report();
@@ -147,6 +157,13 @@
     private void SetPenalty()
     {
         IsPenalty = !IsPenalty;
+        IsMessage = false;
+    }
+
+    private void SetMessage()
+    {
+        IsPenalty = false;
+        IsMessage = !IsMessage;
     }
 
     private void SetSelectedPlayer(ChangeEventArgs e)
