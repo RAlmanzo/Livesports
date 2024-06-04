@@ -1,0 +1,49 @@
+﻿@using Pin.LiveSports.Core.Models
+@using Pin.LiveSports.Blazor.Services.Interfaces
+
+@inject IFileService _fileService
+
+<div>
+    @errorMessage
+</div>
+<EditForm Model="Report" OnValidSubmit="CheckInput">
+    <div class="mb-3">
+        <label id="label" for="ImagePath" class="form-label">Image</label>
+        <InputFile id="ImagePath" class="form-control" OnChange="LoadFile" @bind-Value="Report.Image" />
+    </div>
+    <InputText @bind-Value="Report.Message" class="form-control mb-2" placeholder="Enter report message" />
+    <button class="btn btn-primary" type="submit">Verstuur</button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public Report Report { get; set; }
+    [Parameter]
+    public EventCallback OnSend { get; set; }
+
+    private string errorMessage;
+
+    private async Task LoadFile(InputFileChangeEventArgs e)
+    {
+        if (e != null)
+        {
+            var imagePath = await _fileService.LoadFile(e.File);
+
+            Report.Image = $"/images/{imagePath}";
+        }
+    }
+
+    private async void CheckInput()
+    {
+        if (string.IsNullOrWhiteSpace(Report.Message) || string.IsNullOrWhiteSpace(Report.Image))
+        {
+            errorMessage = "Gelieve een bericht en afbeelding in te geven";
+            await InvokeAsync(StateHasChanged);
+            await Task.Delay(3000);
+            errorMessage = string.Empty;
+            await InvokeAsync(StateHasChanged);
+        }
+
+        await OnSend.InvokeAsync();
+    }
+}
