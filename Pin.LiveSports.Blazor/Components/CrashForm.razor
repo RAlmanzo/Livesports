@@ -43,7 +43,10 @@
             errorMessage = string.Empty;
             await InvokeAsync(StateHasChanged);
         }
+        else
+        {
+            await OnSend.InvokeAsync();
+        }
 
-        await OnSend.InvokeAsync();
     }
 }
