@@ -24,20 +24,14 @@
                     <img src=@player.CountryFlagIcon class="img-fluid" style="max-width: 50px; max-height: 50px;" /> @player.Country
                 </td>
                 <td>@player.FullName</td>
-                @if (player.GameRounds != null)
+                @if (player.GameRounds != null && player.GameRounds.Any(r => r.RoundNumber == Game.RoundNumber))
                 {
                     <td>@player.GameRounds.FirstOrDefault(r => r.RoundNumber == Game.RoundNumber).PenaltyTime.ToString(@"mm\:ss")</td>
-                }
-                else
-                {
-                    <td>@defaultTime</td>
-                }
-                @if (player.GameRounds != null)
-                {
                     <td>@player.GameRounds.FirstOrDefault(r => r.RoundNumber == Game.RoundNumber).RoundTime.ToString(@"mm\:ss")</td>
                 }
                 else
                 {
+                    <td>@defaultTime</td>
                     <td>@defaultTime</td>
                 }
             </tr>
@@ -48,29 +42,37 @@
 @if (IsReporter)
 {
     <div>
-        <select @onchange="e => SetRound.InvokeAsync(e)">
-            <option value="">Selecteer ronde</option>
-            @for (int i = 1; i < 3; i++)
-            {
-                <option value="@i">ronde: @i</option>
-            }
-        </select>
-        @if (!string.IsNullOrWhiteSpace(Game.RoundNumber))
+        @if (!RoundIsSelected)
         {
-            <select @onchange="e => SetPlayer.InvokeAsync(e)">
-                <option value="">Selecteer speler</option>
-                @foreach (var player in _players)
+            <select @onchange="e => SetRound.InvokeAsync(e)">
+                <option value="">Selecteer ronde</option>
+                @for (int i = 1; i < 3; i++)
                 {
-                    <option value="@player.FullName">@player.FullName</option>
+                    <option value="@i">ronde: @i</option>
                 }
             </select>
         }
+
+        @if (RoundIsSelected)
+        {
+            @if (!string.IsNullOrWhiteSpace(Game.RoundNumber))
+            {
+                <select @onchange="e => SetPlayer.InvokeAsync(e)">
+                    <option value="">Selecteer speler</option>
+                    @foreach (var player in _players)
+                    {
+                        <option value="@player.FullName">@player.FullName</option>
+                    }
+                </select>
+            }
+        }
+
     </div>
 
     @*<div class="mt-2">
-        <button class="btn btn-danger" @onclick="StartTimer">StartTimer</button>
-        <button class="btn btn-danger" @onclick="StopTimer">StopTimer</button>
-    </div>*@
+            <button class="btn btn-danger" @onclick="StartTimer">StartTimer</button>
+            <button class="btn btn-danger" @onclick="StopTimer">StopTimer</button>
+        </div>*@
 }
 
 @code {
@@ -81,6 +83,8 @@
     private TimeSpan timeSpan;
     private DateTime startTime;
 
+    [Parameter]
+    public bool RoundIsSelected { get; set; } = false;
     [Parameter]
     public bool IsReporter { get; set; } = false;
     [Parameter]

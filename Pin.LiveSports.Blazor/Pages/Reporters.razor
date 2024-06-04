@@ -18,14 +18,14 @@
                 <PlayersList IsReporter="true"
                              Game="game"
                              SetPlayer="(e) => SetSelectedPlayer(e)"
-                             SetRound="(e) => SetSelectedRound(e)">
+                             SetRound="(e) => SetSelectedRound(e)"
+                             RoundIsSelected="roundIsSelected">
                 </PlayersList>
                 <div>
                     @errorMessage
                 </div>
-                <EditForm Model="report" OnValidSubmit="StartReport">
-                    <button class="btn btn-primary" type="submit">Start Ronde</button>
-                </EditForm>
+                <button class="btn btn-primary" @onclick="StartRound">Start Ronde</button>
+                <button class="btn btn-danger" @onclick="StopRound">Stop Ronde</button>
 
                 @if (ReportHasStarted)
                 {
@@ -36,7 +36,7 @@
                     </div>
 
 
-                    @if (IsPenalty)
+                    @if (isPenalty)
                     {
                         <PenaltyForm Report="report"
                                      Game="game"
@@ -44,7 +44,7 @@
                         </PenaltyForm>
                     }
 
-                    if (IsMessage)
+                    if (isMessage)
                     {
                         <MessageForm Report="report"
                                      OnSend="SendGameStats">
@@ -52,15 +52,11 @@
 
                         <EditForm Model="report" OnValidSubmit="SendGameStats">
                             <InputText @bind-Value="report.Message" class="form-control mb-2" placeholder="Enter report message" />
-                            <button class="btn btn-primary" type="submit">Vis</button>
-                            <button class="btn btn-primary" type="submit">Crash</button>
-                            <button class="btn btn-primary" type="submit">Gezonken</button>
-                            <button class="btn btn-primary" type="submit">Gewond</button>
-                            <button class="btn btn-primary" type="submit">Einde</button>
+                            <button class="btn btn-primary" type="submit">Einde ronde</button>
                             <button class="btn btn-primary" type="submit">Spell stilgelegd door obstakel</button>
                         </EditForm>
                     }
-                    if (IsCrash)
+                    if (isCrash)
                     {
                         <CrashForm Report="report"
                                    OnSend="SendGameStats">
@@ -91,9 +87,10 @@
     private Game game = new Game();
     private bool ReportHasStarted;
     private string errorMessage;
-    private bool IsPenalty;
-    private bool IsMessage;
-    private bool IsCrash;
+    private bool isPenalty;
+    private bool isMessage;
+    private bool isCrash;
+    private bool roundIsSelected;
 
     protected override async Task OnInitializedAsync()
     {
@@ -131,7 +128,13 @@
         }
     }
 
-    private async Task StartReport()
+    private void StopRound()
+    {
+        roundIsSelected = false;
+        game.SelectedPlayer = null;
+    }
+
+    private async Task StartRound()
     {
         if (game.SelectedPlayer == null || string.IsNullOrWhiteSpace(game.RoundNumber))
         {
@@ -168,23 +171,23 @@
 
     private void SetPenalty()
     {
-        IsCrash = false;
-        IsMessage = false;
-        IsPenalty = !IsPenalty;
+        isCrash = false;
+        isMessage = false;
+        isPenalty = !isPenalty;
     }
 
     private void SetMessage()
     {
-        IsCrash = false;
-        IsPenalty = false;
-        IsMessage = !IsMessage;
+        isCrash = false;
+        isPenalty = false;
+        isMessage = !isMessage;
     }
 
     private void SetCrash()
     {
-        IsPenalty = false;
-        IsMessage = false;
-        IsCrash = !IsCrash;
+        isPenalty = false;
+        isMessage = false;
+        isCrash = !isCrash;
     }
 
     private void SetSelectedPlayer(ChangeEventArgs e)
@@ -203,5 +206,6 @@
     private void SetSelectedRound(ChangeEventArgs e)
     {
         game.RoundNumber = e.Value.ToString();
+        roundIsSelected = true;
     }
 }
