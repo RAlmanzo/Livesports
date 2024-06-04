@@ -5,6 +5,9 @@
     <div class="position-absolute top-50 start-50 translate-middle bg-light p-4 rounded shadow">
         @if (OnStart)
         {
+            <div>
+                @ErrorMessage
+            </div>
             <EditForm Model="Viewer" OnValidSubmit="e => OnJoin.InvokeAsync()">
                 <div class="mb-3">
                     <InputText @bind-Value="Viewer.Name" class="form-control" placeholder="Enter your name" />
@@ -27,4 +30,6 @@
     public EventCallback OnJoin { get; set; }
     [Parameter]
     public bool OnStart { get; set; }
+    [Parameter]
+    public string ErrorMessage { get; set; }
 }

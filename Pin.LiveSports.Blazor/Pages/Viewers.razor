@@ -10,10 +10,11 @@
 @inject IGameService _gameService
 
 @if (!IsJoined)
-{
-    <JoinGameReport Viewer="Viewer"
+{   
+    <JoinGameReport Viewer="viewer"
                     OnJoin="AddViewer"
-                    OnStart="IsStarted">
+                    OnStart="IsStarted"
+                    ErrorMessage="@errorMessage">
     </JoinGameReport>
 }
 else
@@ -26,7 +27,6 @@ else
                 </PlayersList>
                 @if (selectedPlayer != null)
                 {
-                                  
                     <div class="d-flex align-items-center">
                         <img src=@selectedPlayer.Image class="img-fluid" style="max-width: 350px; max-height: 350px;" alt="...">
                         <div>
@@ -39,7 +39,7 @@ else
                                 <label>Leeftijd: </label>
                                 <h5 class="m-3">@selectedPlayer.Age</h5>
                             </div>
-                            
+
                         </div>
                     </div>
                 }
@@ -57,9 +57,10 @@ else
 
 @code {
     public string Feedback { get; set; }
-    private Viewer Viewer { get; set; } = new Viewer();
+    private Viewer viewer { get; set; } = new Viewer();
     public bool IsJoined { get; set; } = false;
     public bool IsStarted { get; set; } = false;
+    private string errorMessage;
 
     private HubConnection? hubConnection;
     private List<Viewer> viewers = new List<Viewer>();
@@ -109,16 +110,27 @@ else
 
     private async Task AddViewer()
     {
-        IsJoined = true;
-        await NotifyNewViewerJoined();
-        viewers = _gameService.GetAllViewers();
+        if (!string.IsNullOrWhiteSpace(viewer.Name))
+        {
+            IsJoined = true;
+            await NotifyNewViewerJoined();
+            viewers = _gameService.GetAllViewers();
+        }
+        else
+        {
+            errorMessage = "Gelieve een naam in te geven";
+            await InvokeAsync(StateHasChanged);
+            await Task.Delay(3000);
+            errorMessage = string.Empty;
+        }
+
     }
 
     private async Task NotifyNewViewerJoined()
     {
         if (hubConnection is not null)
         {
-            await hubConnection.SendAsync(nameof(GameHub.NewViewerJoined), Viewer.Name);
+            await hubConnection.SendAsync(nameof(GameHub.NewViewerJoined), viewer.Name);
         }
     }
 }
