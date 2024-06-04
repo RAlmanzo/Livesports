@@ -21,12 +21,12 @@
             <tr>
                 <td>@player.Position</td>
                 <td>
-                    <img src=@player.CountryFlagIcon class="img-fluid" style="max-width: 50px; max-height: 50px;"/> @player.Country
+                    <img src=@player.CountryFlagIcon class="img-fluid" style="max-width: 50px; max-height: 50px;" /> @player.Country
                 </td>
                 <td>@player.FullName</td>
                 @if (player.GameRounds != null)
                 {
-                    <td>@player.GameRounds.FirstOrDefault(r => r.RoundNumber == Game.RoundNumber).PenaltyTime</td>
+                    <td>@player.GameRounds.FirstOrDefault(r => r.RoundNumber == Game.RoundNumber).PenaltyTime.ToString(@"mm\:ss")</td>
                 }
                 else
                 {
@@ -34,7 +34,7 @@
                 }
                 @if (player.GameRounds != null)
                 {
-                    <td>@player.GameRounds.FirstOrDefault(r => r.RoundNumber == Game.RoundNumber).RoundTime</td>
+                    <td>@player.GameRounds.FirstOrDefault(r => r.RoundNumber == Game.RoundNumber).RoundTime.ToString(@"mm\:ss")</td>
                 }
                 else
                 {
@@ -66,11 +66,20 @@
             </select>
         }
     </div>
+
+    <div class="mt-2">
+        <button class="btn btn-danger" @onclick="StartTimer">StartTimer</button>
+        <button class="btn btn-danger" @onclick="StopTimer">StopTimer</button>
+    </div>
 }
 
 @code {
     private List<Player> _players = new List<Player>();
     private TimeSpan defaultTime = new TimeSpan();
+    private bool isRunning = false;
+    private Timer timer;
+    private TimeSpan timeSpan;
+    private DateTime startTime;
 
     [Parameter]
     public bool IsReporter { get; set; } = false;
@@ -83,7 +92,33 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _players = _gameService.GetGame().Players;
+        Game = _gameService.GetGame();
+        _players = Game.Players;
         await InvokeAsync(StateHasChanged);
+    }
+
+    private void StartTimer()
+    {
+        if (!isRunning)
+        {
+            startTime = DateTime.Now;
+            timer = new Timer(UpdateTime, null, 0, 1000);
+            isRunning = true;
+        }
+    }
+
+    private void StopTimer()
+    {
+        if (isRunning)
+        {
+            timer?.Dispose();
+            isRunning = false;
+        }
+    }
+
+    private void UpdateTime(object state)
+    {
+        timeSpan = DateTime.Now - startTime;
+        InvokeAsync(StateHasChanged);
     }
 }
