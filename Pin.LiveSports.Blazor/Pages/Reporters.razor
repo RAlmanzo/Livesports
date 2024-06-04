@@ -118,6 +118,7 @@
         });
 
         await hubConnection.StartAsync();
+
         game = _gameService.GetGame();
         reports = game.Reports;
         ReportHasStarted = game.IsStarted;
@@ -187,6 +188,7 @@
 
                 report.Message = $"Start ronde {game.RoundNumber}: {game.SelectedPlayer.FullName}";
                 report.Image = "images/startrace.png";
+                report.Created = DateTime.Now;
                 _gameService.AddReport(report);
                 await hubConnection.SendAsync(nameof(GameHub.SendReport), report);
             }
@@ -198,6 +200,7 @@
     {
         if (hubConnection is not null)
         {
+            report.Created = DateTime.Now;
             _gameService.AddReport(report);
             await hubConnection.SendAsync(nameof(GameHub.SendReport), report);
         }

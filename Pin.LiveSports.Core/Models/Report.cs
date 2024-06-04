@@ -13,5 +13,6 @@ namespace Pin.LiveSports.Core.Models
         public string PenaltyIcon { get; set; }
         public string Image {  get; set; }
         public TimeSpan Time { get; set; }
+        public DateTime Created { get; set; }
     }
 }
