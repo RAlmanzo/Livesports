@@ -16,7 +16,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var player in _players)
+        @foreach (var player in Game.Players)
         {
             <tr>
                 <td>@player.Position</td>
@@ -59,7 +59,7 @@
             {
                 <select @onchange="e => SetPlayer.InvokeAsync(e)">
                     <option value="">Selecteer speler</option>
-                    @foreach (var player in _players)
+                    @foreach (var player in Game.Players)
                     {
                         <option value="@player.FullName">@player.FullName</option>
                     }
@@ -88,7 +88,7 @@
     protected override async Task OnInitializedAsync()
     {
         Game = _gameService.GetGame();
-        _players = Game.Players;
+
         await InvokeAsync(StateHasChanged);
     }
 }
