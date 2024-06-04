@@ -12,5 +12,6 @@ namespace Pin.LiveSports.Core.Models
         public int PortNumber { get; set; }
         public string PenaltyIcon { get; set; }
         public string Image {  get; set; }
+        public TimeSpan Time { get; set; }
     }
 }

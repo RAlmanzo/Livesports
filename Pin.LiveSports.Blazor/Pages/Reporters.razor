@@ -29,12 +29,21 @@
 
                 @if (ReportHasStarted)
                 {
-                    <div class="mt-2">
-                        <button class="btn btn-primary" @onclick="SetMessage">Verstuur bericht</button>
-                        <button class="btn btn-primary" @onclick="SetCrash">Crash</button>
-                        <button class="btn btn-danger" @onclick="SetPenalty">Straftijd</button>
-                    </div>
 
+
+                    <div class="mt-2">
+                        @if (!raceHasStarted)
+                        {
+                            <button class="btn btn-info" @onclick="StartPlayerRound">Start race</button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-info" @onclick="SetMessage">Verstuur bericht</button>
+                            <button class="btn btn-danger" @onclick="SetCrash">Crash</button>
+                            <button class="btn btn-danger" @onclick="SetPenalty">Straftijd</button>
+                            <button class="btn btn-primary" @onclick="SetEndPlayerRound">Einde race</button>
+                        }
+                    </div>
 
                     @if (isPenalty)
                     {
@@ -91,6 +100,11 @@
     private bool isMessage;
     private bool isCrash;
     private bool roundIsSelected;
+    private bool raceHasStarted;
+    private bool isRunning = false;
+    private Timer timer;
+    private TimeSpan timeSpan;
+    private DateTime startTime;
 
     protected override async Task OnInitializedAsync()
     {
@@ -135,6 +149,29 @@
         ReportHasStarted = false;
     }
 
+    private void StartPlayerRound()
+    {
+        raceHasStarted = true;
+        StartTimer();
+    }
+
+    private async void StopPlayerRound()
+    {
+        raceHasStarted = false;
+        if (hubConnection is not null)
+        {
+            StopTimer();
+            ReportHasStarted = true;
+            game.SelectedPlayer.GameRounds.FirstOrDefault(r => r.RoundNumber == game.RoundNumber).RoundTime = timeSpan;
+
+            report.Message = $"Einde rond {game.RoundNumber} voor {game.SelectedPlayer.FullName} met een tijd van {game.SelectedPlayer.GameRounds.FirstOrDefault(r => r.RoundNumber == game.RoundNumber).RoundTime.ToString(@"mm\:ss")}";
+            report.Image = "images/stoprace.png";
+            _gameService.AddReport(report);
+            await hubConnection.SendAsync(nameof(GameHub.SendReport), report);
+        }
+        report = new Report();
+    }
+
     private async Task StartRound()
     {
         if (game.SelectedPlayer == null || string.IsNullOrWhiteSpace(game.RoundNumber))
@@ -153,6 +190,7 @@
                 ReportHasStarted = true;
 
                 report.Message = $"Start ronde {game.RoundNumber}: {game.SelectedPlayer.FullName}";
+                report.Image = "images/startrace.png";
                 _gameService.AddReport(report);
                 await hubConnection.SendAsync(nameof(GameHub.SendReport), report);
             }
@@ -191,6 +229,14 @@
         isCrash = !isCrash;
     }
 
+    private void SetEndPlayerRound()
+    {
+        isCrash = false;
+        isMessage = false;
+        isPenalty = false;
+        StopPlayerRound();
+    }
+
     private void SetSelectedPlayer(ChangeEventArgs e)
     {
         var player = game.Players.FirstOrDefault(p => p.FullName == e.Value.ToString());
@@ -208,5 +254,30 @@
     {
         game.RoundNumber = e.Value.ToString();
         roundIsSelected = true;
+    }
+
+    private void StartTimer()
+    {
+        if (!isRunning)
+        {
+            startTime = DateTime.Now;
+            timer = new Timer(UpdateTime, null, 0, 1000);
+            isRunning = true;
+        }
+    }
+
+    private void StopTimer()
+    {
+        if (isRunning)
+        {
+            timer?.Dispose();
+            isRunning = false;
+        }
+    }
+
+    private void UpdateTime(object state)
+    {
+        timeSpan = DateTime.Now - startTime;
+        InvokeAsync(StateHasChanged);
     }
 }

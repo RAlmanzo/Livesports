@@ -68,20 +68,11 @@
         }
 
     </div>
-
-    @*<div class="mt-2">
-            <button class="btn btn-danger" @onclick="StartTimer">StartTimer</button>
-            <button class="btn btn-danger" @onclick="StopTimer">StopTimer</button>
-        </div>*@
 }
 
 @code {
     private List<Player> _players = new List<Player>();
     private TimeSpan defaultTime = new TimeSpan();
-    private bool isRunning = false;
-    private Timer timer;
-    private TimeSpan timeSpan;
-    private DateTime startTime;
 
     [Parameter]
     public bool RoundIsSelected { get; set; } = false;
@@ -99,30 +90,5 @@
         Game = _gameService.GetGame();
         _players = Game.Players;
         await InvokeAsync(StateHasChanged);
-    }
-
-    private void StartTimer()
-    {
-        if (!isRunning)
-        {
-            startTime = DateTime.Now;
-            timer = new Timer(UpdateTime, null, 0, 1000);
-            isRunning = true;
-        }
-    }
-
-    private void StopTimer()
-    {
-        if (isRunning)
-        {
-            timer?.Dispose();
-            isRunning = false;
-        }
-    }
-
-    private void UpdateTime(object state)
-    {
-        timeSpan = DateTime.Now - startTime;
-        InvokeAsync(StateHasChanged);
     }
 }
