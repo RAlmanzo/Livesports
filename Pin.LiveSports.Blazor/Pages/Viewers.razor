@@ -18,28 +18,33 @@
 }
 else
 {
-<h2 style="text-align:center">@game.Name: wild water kajak</h2>
+    <h2 style="text-align:center">@game.Name: wild water kajak</h2>
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-5">
-                <PlayersList Game ="game">
+                <PlayersList Game="game">
                 </PlayersList>
                 @if (selectedPlayer != null)
                 {
-                    <div>
-                        <div class="card" style="width: 18rem;">
-                            <!--tips: add .text-center,.text-right to the .card to change card text alignment-->
-                            <img src=@selectedPlayer.Image class="card-img-top" alt="...">
-                            <div class="card-body">
-                                <h5 class="card-title">@selectedPlayer.FullName</h5>
-                                <p class="card-text">@selectedPlayer.GameRounds.FirstOrDefault(r => r.RoundNumber == game.RoundNumber).PenaltyTime.ToString(@"mm\:ss")</p>
-                                <p class="card-text">@selectedPlayer.GameRounds.FirstOrDefault(r => r.RoundNumber == game.RoundNumber).RoundTime.ToString(@"mm\:ss")</p>
+                                  
+                    <div class="d-flex align-items-center">
+                        <img src=@selectedPlayer.Image class="img-fluid" style="max-width: 350px; max-height: 350px;" alt="...">
+                        <div>
+                            <h5 class="m-3"> @selectedPlayer.FullName</h5>
+                            <div class="d-flex m-3 align-items-center">
+                                <img src="@selectedPlayer.CountryFlagIcon" class="img-fluid" style="max-width: 75px; max-height: 75px;" />
+                                <h5 class="m-3">@selectedPlayer.Country</h5>
                             </div>
+                            <div class="d-flex align-items-center m-3">
+                                <label>Leeftijd: </label>
+                                <h5 class="m-3">@selectedPlayer.Age</h5>
+                            </div>
+                            
                         </div>
                     </div>
                 }
             </div>
-            <div class="col-md-5" style="border: double; height: 700px; background-color: powderblue; overflow: auto;">
+            <div class="col-md-5" style="border: double; height: 650px; background-color: powderblue; overflow: auto;">
                 <ReportOverview Reports="reports"></ReportOverview>
             </div>
             <div class="col-md-2">
@@ -95,7 +100,7 @@ else
         game = _gameService.GetGame();
         IsStarted = game.IsStarted;
         reports = game.Reports;
-        if(selectedPlayer == null)
+        if (selectedPlayer == null)
         {
             selectedPlayer = game.SelectedPlayer;
         }
