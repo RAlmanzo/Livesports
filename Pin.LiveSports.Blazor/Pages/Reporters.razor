@@ -13,49 +13,52 @@
     <div class="row">
         <div class="col-md-5">
             <button class="btn btn-primary" @onclick="StartGame">Start verslag</button>
-            <PlayersList IsReporter="true"
-                         Game="game"
-                         SetPlayer="(e) => SetSelectedPlayer(e)"
-                         SetRound="(e) => SetSelectedRound(e)">
-            </PlayersList>
-            <div>
-                @errorMessage
-            </div>
-            <EditForm Model="report" OnValidSubmit="StartReport">
-                <button class="btn btn-primary" type="submit">Start Ronde</button>
-            </EditForm>
-            @if (ReportHasStarted)
+            @if (game.IsStarted)
             {
-                <div class="mt-2">
-                    <button class="btn btn-primary" @onclick="SetMessage">Verstuur bericht</button>
-                    <button class="btn btn-danger" @onclick="SetPenalty">Straftijd</button>
+                <PlayersList IsReporter="true"
+                             Game="game"
+                             SetPlayer="(e) => SetSelectedPlayer(e)"
+                             SetRound="(e) => SetSelectedRound(e)">
+                </PlayersList>
+                <div>
+                    @errorMessage
                 </div>
+                <EditForm Model="report" OnValidSubmit="StartReport">
+                    <button class="btn btn-primary" type="submit">Start Ronde</button>
+                </EditForm>
 
-
-                @if (IsPenalty)
+                @if (ReportHasStarted)
                 {
-                    <PenaltyForm Report="report"
-                                 Game="game"
-                                 OnSendPenalty="SendGameStats">
-                    </PenaltyForm>
-                }
+                    <div class="mt-2">
+                        <button class="btn btn-primary" @onclick="SetMessage">Verstuur bericht</button>
+                        <button class="btn btn-danger" @onclick="SetPenalty">Straftijd</button>
+                    </div>
 
-                if (IsMessage)
-                {
-                    <MessageForm Report="report"
-                                 OnSend="SendGameStats">
-                    </MessageForm>
-                    <EditForm Model="report" OnValidSubmit="SendGameStats">
-                        <InputText @bind-Value="report.Message" class="form-control mb-2" placeholder="Enter report message" />
-                        <button class="btn btn-primary" type="submit">Vis</button>
-                        <button class="btn btn-primary" type="submit">Crash</button>
-                        <button class="btn btn-primary" type="submit">Gezonken</button>
-                        <button class="btn btn-primary" type="submit">Gewond</button>
-                        <button class="btn btn-primary" type="submit">Einde</button>
-                        <button class="btn btn-primary" type="submit">Spell stilgelegd door obstakel</button>
-                    </EditForm>
-                }
 
+                    @if (IsPenalty)
+                    {
+                        <PenaltyForm Report="report"
+                                     Game="game"
+                                     OnSendPenalty="SendGameStats">
+                        </PenaltyForm>
+                    }
+
+                    if (IsMessage)
+                    {
+                        <MessageForm Report="report"
+                                     OnSend="SendGameStats">
+                        </MessageForm>
+                        <EditForm Model="report" OnValidSubmit="SendGameStats">
+                            <InputText @bind-Value="report.Message" class="form-control mb-2" placeholder="Enter report message" />
+                            <button class="btn btn-primary" type="submit">Vis</button>
+                            <button class="btn btn-primary" type="submit">Crash</button>
+                            <button class="btn btn-primary" type="submit">Gezonken</button>
+                            <button class="btn btn-primary" type="submit">Gewond</button>
+                            <button class="btn btn-primary" type="submit">Einde</button>
+                            <button class="btn btn-primary" type="submit">Spell stilgelegd door obstakel</button>
+                        </EditForm>
+                    }
+                }
             }
         </div>
         <div class="col-md-5" style="border:double; height:500px">
@@ -102,7 +105,7 @@
         await hubConnection.StartAsync();
         game = _gameService.GetGame();
         reports = game.Reports;
-        ReportHasStarted = true;
+        ReportHasStarted = game.IsStarted;
     }
 
     private void LoadViewers()
