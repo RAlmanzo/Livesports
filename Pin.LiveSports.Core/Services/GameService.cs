@@ -20,11 +20,11 @@ namespace Pin.LiveSports.Core.Services
             viewers = new List<Viewer>();
             players = new List<Player>
             {
-                new Player{Position = "-", FullName = "Bram Sikkens", Country = "België", CountryFlagIcon = "images/belgie.png", GameRounds = null, Image = "images/bramsikkens.png"},
-                new Player{Position = "-", FullName = "Peter Kauzer", Country = "Slovakije", CountryFlagIcon = "images/slovakije.png", GameRounds = null, Image = "images/peterkauzer.png"},
-                new Player{Position = "-", FullName = "Pedro Goncalves", Country = "Brazilie", CountryFlagIcon = "images/brazilie.png", GameRounds = null, Image = "images/pedro.png"},
-                new Player{Position = "-", FullName = "Jakub Brzezinski", Country = "Polen", CountryFlagIcon = "images/polen.png", GameRounds = null, Image = "images/jakub.png"},
-                new Player{Position = "-", FullName = "Hannes Aigner", Country = "Duitsland", CountryFlagIcon = "images/duitsland.png", GameRounds = null , Image = "images/hannes.png"},
+                new Player{Position = "-", Age = 32, FullName = "Bram Sikkens", Country = "België", CountryFlagIcon = "images/belgie.png", GameRounds = null, Image = "images/bramsikkens.png"},
+                new Player{Position = "-", Age = 29, FullName = "Peter Kauzer", Country = "Slovakije", CountryFlagIcon = "images/slovakije.png", GameRounds = null, Image = "images/peterkauzer.png"},
+                new Player{Position = "-", Age = 25, FullName = "Pedro Goncalves", Country = "Brazilie", CountryFlagIcon = "images/brazilie.png", GameRounds = null, Image = "images/pedro.png"},
+                new Player{Position = "-", Age = 34, FullName = "Jakub Brzezinski", Country = "Polen", CountryFlagIcon = "images/polen.png", GameRounds = null, Image = "images/jakub.png"},
+                new Player{Position = "-", Age = 22, FullName = "Hannes Aigner", Country = "Duitsland", CountryFlagIcon = "images/duitsland.png", GameRounds = null , Image = "images/hannes.png"},
             };
 
             var game = new Game {Name = "Lee Valley White Water Centre", Players = players };
