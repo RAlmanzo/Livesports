@@ -34,7 +34,7 @@ namespace Pin.LiveSports.Core.Services
 
         public void AddReport(Report report)
         {
-            GetGame().Reports.Add(report);
+            GetGame().Reports.Insert(0, report);
         }
 
         public void AddViewer(Viewer viewer)
