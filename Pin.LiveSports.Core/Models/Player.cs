@@ -15,5 +15,6 @@ namespace Pin.LiveSports.Core.Models
         public string Country { get; set; }
         public string CountryFlagIcon { get; set; }
         public List<GameRound> GameRounds { get; set; }
+        public TimeSpan BestTime { get; set; }
     }
 }
