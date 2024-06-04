@@ -31,6 +31,7 @@
                 {
                     <div class="mt-2">
                         <button class="btn btn-primary" @onclick="SetMessage">Verstuur bericht</button>
+                        <button class="btn btn-primary" @onclick="SetCrash">Crash</button>
                         <button class="btn btn-danger" @onclick="SetPenalty">Straftijd</button>
                     </div>
 
@@ -48,6 +49,7 @@
                         <MessageForm Report="report"
                                      OnSend="SendGameStats">
                         </MessageForm>
+
                         <EditForm Model="report" OnValidSubmit="SendGameStats">
                             <InputText @bind-Value="report.Message" class="form-control mb-2" placeholder="Enter report message" />
                             <button class="btn btn-primary" type="submit">Vis</button>
@@ -57,6 +59,12 @@
                             <button class="btn btn-primary" type="submit">Einde</button>
                             <button class="btn btn-primary" type="submit">Spell stilgelegd door obstakel</button>
                         </EditForm>
+                    }
+                    if (IsCrash)
+                    {
+                        <CrashForm Report="report"
+                                   OnSend="SendGameStats">
+                        </CrashForm>
                     }
                 }
             }
@@ -85,6 +93,7 @@
     private string errorMessage;
     private bool IsPenalty;
     private bool IsMessage;
+    private bool IsCrash;
 
     protected override async Task OnInitializedAsync()
     {
@@ -159,14 +168,23 @@
 
     private void SetPenalty()
     {
-        IsPenalty = !IsPenalty;
+        IsCrash = false;
         IsMessage = false;
+        IsPenalty = !IsPenalty;
     }
 
     private void SetMessage()
     {
+        IsCrash = false;
         IsPenalty = false;
         IsMessage = !IsMessage;
+    }
+
+    private void SetCrash()
+    {
+        IsPenalty = false;
+        IsMessage = false;
+        IsCrash = !IsCrash;
     }
 
     private void SetSelectedPlayer(ChangeEventArgs e)
