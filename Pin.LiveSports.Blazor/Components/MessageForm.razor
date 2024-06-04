@@ -1,8 +1,13 @@
 ﻿@using Pin.LiveSports.Core.Models
+@using Pin.LiveSports.Blazor.Services.Interfaces
 
-@inject IWebHostEnvironment _webHost
+@inject IFileService _fileService
 
-<EditForm Model="Report" OnValidSubmit="e => OnSend.InvokeAsync()">
+
+<div>
+    @errorMessage
+</div>
+<EditForm Model="Report" OnValidSubmit="CheckInput">
     <div class="mb-3">
         <label id="label" for="ImagePath" class="form-label">Image</label>
         <InputFile id="ImagePath" class="form-control" OnChange="LoadFile" @bind-Value="Report.Image" />
@@ -17,29 +22,28 @@
     [Parameter]
     public EventCallback OnSend { get; set; }
 
-    private IBrowserFile selectedFile;
+    private string errorMessage;
 
     private async Task LoadFile(InputFileChangeEventArgs e)
     {
-        selectedFile = e.File;
-
-        if (selectedFile != null)
+        if (e != null)
         {
-            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(selectedFile.Name)}";
+            var imagePath = await _fileService.LoadFile(e.File);
 
-            var pathToFolder = Path.Combine(_webHost.WebRootPath, "images");
-            var pathToFile = Path.Combine(pathToFolder, fileName);
-
-            Report.Image = $"/images/{fileName}";
-
-            Directory.CreateDirectory(Path.GetDirectoryName(pathToFolder));
-
-            using (var fileStream = new FileStream(pathToFile, FileMode.Create))
-            {
-                await selectedFile.OpenReadStream().CopyToAsync(fileStream);
-            }
+            Report.Image = $"/images/{imagePath}";
         }
+    }
 
-        selectedFile = null;
+    private async void CheckInput()
+    {
+        if (string.IsNullOrWhiteSpace(Report.Message))
+        {
+            errorMessage = "Gelieve een bericht in te geven";
+            await InvokeAsync(StateHasChanged);
+            await Task.Delay(3000);
+            errorMessage = string.Empty;
+            await InvokeAsync(StateHasChanged);
+        }
+        await OnSend.InvokeAsync();
     }
 }
