@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Pin.LiveSports.Blazor.Data;
 using Pin.LiveSports.Blazor.Hubs;
+using Pin.LiveSports.Blazor.Services;
+using Pin.LiveSports.Blazor.Services.Interfaces;
 using Pin.LiveSports.Core.Services;
 using Pin.LiveSports.Core.Services.Interfaces;
 
@@ -19,6 +21,7 @@ namespace Pin.LiveSports.Blazor
             builder.Services.AddSignalR();
             builder.Services.AddSingleton<WeatherForecastService>();
             builder.Services.AddSingleton<IGameService, GameService>();
+            builder.Services.AddSingleton<IFileService, FileService>();
 
             var app = builder.Build();
 
