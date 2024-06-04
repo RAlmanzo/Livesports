@@ -26,6 +26,7 @@
                 </div>
                 <button class="btn btn-primary" @onclick="StartRound">Start Ronde</button>
                 <button class="btn btn-danger" @onclick="StopRound">Stop Ronde</button>
+                <button class="btn btn-danger" @onclick="StopGame">Stop Game</button>
 
                 @if (ReportHasStarted)
                 {
@@ -136,6 +137,15 @@
             game.IsStarted = true;
             await hubConnection.SendAsync(nameof(GameHub.StartReport));
         }
+    }
+
+    private async Task StopGame()
+    {
+        game.RoundNumber = string.Empty;
+        var winningPlayer = game.Players.FirstOrDefault();
+        report.Image = "/images/winner.png";
+        report.Message = $"Speler: {winningPlayer.FullName} heeft gewonnen met als snelste tijd {winningPlayer.BestTime.ToString(@"mm\:ss")}";
+        await SendGameStats();
     }
 
     private void StopRound()

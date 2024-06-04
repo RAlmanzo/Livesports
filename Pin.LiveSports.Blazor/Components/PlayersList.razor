@@ -24,7 +24,12 @@
                     <img src=@player.CountryFlagIcon class="img-fluid" style="max-width: 50px; max-height: 50px;" /> @player.Country
                 </td>
                 <td>@player.FullName</td>
-                @if (player.GameRounds != null && player.GameRounds.Any(r => r.RoundNumber == Game.RoundNumber))
+                @if (string.IsNullOrWhiteSpace(Game.RoundNumber))
+                {
+                    <td>@player.BestTime.ToString(@"mm\:ss")</td>
+                    <td>@player.BestTime.ToString(@"mm\:ss")</td>
+                }
+                else if (player.GameRounds != null && player.GameRounds.Any(r => r.RoundNumber == Game.RoundNumber))
                 {
                     <td>@player.GameRounds.FirstOrDefault(r => r.RoundNumber == Game.RoundNumber).PenaltyTime.ToString(@"mm\:ss")</td>
                     <td>@player.GameRounds.FirstOrDefault(r => r.RoundNumber == Game.RoundNumber).RoundTime.ToString(@"mm\:ss")</td>
