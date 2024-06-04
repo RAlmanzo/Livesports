@@ -143,6 +143,7 @@
     {
         game.RoundNumber = string.Empty;
         var winningPlayer = game.Players.FirstOrDefault();
+        game.SelectedPlayer = winningPlayer;
         report.Image = "/images/winner.png";
         report.Message = $"Speler: {winningPlayer.FullName} heeft gewonnen met als snelste tijd {winningPlayer.BestTime.ToString(@"mm\:ss")}";
         await SendGameStats();
