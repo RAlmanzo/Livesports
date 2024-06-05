@@ -71,18 +71,11 @@ namespace NewFeatures.Cons
 }
 
 // Definieer een klasse met een primaire constructor
-public class Person
+public class Person(string firstname, string lastname)
 {
-    // Primaire constructor met parameters
-    public Person(string firstname, string lastname)
-    {
-        Firstname = firstname;
-        Lastname = lastname;
-    }
-
     // Auto-implementatie-eigenschappen
-    public string Firstname { get; }
-    public string Lastname { get; }
+    public string Firstname { get; } = firstname;
+    public string Lastname { get; } = lastname;
 
     // Aangepaste ToString-methode
     public override string ToString() => $"{Firstname} {Lastname}";
