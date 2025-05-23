@@ -28,7 +28,7 @@ else
                 @if (selectedPlayer != null)
                 {
                     <div class="d-flex align-items-center">
-                        <img src=@selectedPlayer.Image class="img-fluid" style="max-width: 350px; max-height: 350px;" alt="...">
+                        <img src=@selectedPlayer.Image class="img-fluid" style="max-width: 250px; max-height: 250px;" alt="...">
                         <div>
                             <h5 class="m-3"> @selectedPlayer.FullName</h5>
                             <div class="d-flex m-3 align-items-center">
@@ -44,10 +44,10 @@ else
                     </div>
                 }
             </div>
-            <div class="col-md-5" style="border: double; height: 650px; background-color: powderblue; overflow: auto;">
+            <div class="col-md-4" style="border: double; height: 650px; background-color: powderblue; overflow: auto;">
                 <ReportOverview Reports="reports"></ReportOverview>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-3">
                 <img src="images/parcour.png" style="height:500px" />
                 <ViewersList Viewers="viewers" Feedback="@Feedback"></ViewersList>
             </div>
