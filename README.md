@@ -42,16 +42,26 @@ During the development of this project, I gained hands-on experience in:
 ## 🗂️ Project Structure
 
 LiveSports.Blazor/
+
 │
+
 ├── Pages/ # Razor pages
+
 ├── Components/ # .razor components
+
 ├── Hubs/ # SignalR hubs
+
 ├── wwwroot/ # Static assets (CSS, JS, images)
+
 └── Program.cs / Startup.cs # App startup and DI config
 
+
 LiveSports.Core/
+
 │
+
 ├── Models/ # Data models (Race, User, Message)
+
 └── Services/ # Application services (e.g. race manager)
 
 ---
@@ -68,6 +78,8 @@ dotnet restore
 dotnet run
 ```
 
+---
+
 ## 💡 Possible Improvements
 
 🔒 Add authentication & role-based authorization
@@ -78,7 +90,9 @@ dotnet run
 
 🌍 Multi-language support
 
-📬 Contact
+---
+
+## 📬 Contact
 For questions, suggestions or collaboration:
 
 📧 Email: ralmanzo@gmail.com
